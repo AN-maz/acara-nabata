@@ -659,6 +659,77 @@ tfoot td { font-weight: 800; border-top: 1px solid var(--line-soft); color: var(
 
 .topbar, .stats, .meetings, .board, .panel { position: relative; z-index: 2; }
 
+/* ---------- Scene pixel art: Ruang Kerja ---------- */
+.office { position: relative; z-index: 2; padding: 4px clamp(16px, 4vw, 40px) 0; }
+.office-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.office-head h2 {
+  font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+}
+.office-head p { font-size: 13.5px; color: var(--muted); opacity: 0.85; }
+.office-scroll { overflow-x: auto; overflow-y: hidden; padding-bottom: 8px; }
+.office-view { position: relative; }
+.office-view::after {
+  content: ""; position: absolute; top: 0; right: 0; bottom: 8px; width: 56px;
+  background: linear-gradient(to right, rgba(26, 11, 51, 0) 0%, rgba(26, 11, 51, 0.75) 100%);
+  pointer-events: none; border-radius: 0 var(--radius) var(--radius) 0; display: none;
+}
+@media (max-width: 860px) { .office-view::after { display: block; } }
+.office-scene {
+  position: relative;
+  min-width: 760px;
+  aspect-ratio: 760 / 470;
+  background: url(../assets/pixel/room.png) no-repeat center / 100% 100%;
+  image-rendering: pixelated;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.ws {
+  position: absolute; border: 0; background: none; padding: 0; cursor: pointer; z-index: 3;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+.ws:hover, .ws:focus-visible { transform: translateY(-3px); filter: brightness(1.08); z-index: 5; }
+.ws:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; border-radius: 8px; }
+.ws .frame {
+  position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+  image-rendering: pixelated; pointer-events: none;
+}
+.ws .f-b { opacity: 0; animation: wsType 0.5s steps(1, end) infinite; }
+@keyframes wsType { 0%, 49% { opacity: 0; } 50%, 100% { opacity: 1; } }
+.ws-pill {
+  position: absolute; left: 50%; top: -40px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  background: rgba(16, 8, 36, 0.94);
+  border: 1px solid rgba(177, 79, 196, 0.4);
+  padding: 4px 9px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.02em;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+}
+.ws-pill .txt { display: flex; flex-direction: column; line-height: 1.3; }
+.ws-pill b { font-size: 11px; }
+.ws-pill em {
+  font-style: normal; font-weight: 600; font-size: 9.5px; color: #b9a9d8;
+  max-width: 108px; overflow: hidden; text-overflow: ellipsis;
+}
+.ws-pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex: none; }
+.ws.koor .ws-pill { border-color: var(--burst-2); }
+.ws.koor .ws-pill i { background: var(--burst-2); }
+.swipe-hint {
+  display: none; margin-left: auto;
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  background: var(--panel-2); border: 1px solid var(--line-soft);
+  padding: 4px 10px; border-radius: 999px;
+}
+@media (max-width: 860px) {
+  .swipe-hint { display: inline-block; animation: swipeNudge 1.6s ease-in-out infinite; }
+}
+@keyframes swipeNudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+.mini-task { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-top: 8px; color: var(--text); }
+@media (prefers-reduced-motion: reduce) {
+  .ws .f-b { animation: none; opacity: 0; }
+  .ws:hover, .ws:focus-visible { transform: none; }
+}
+
 /* ---------- Loading ---------- */
 .loading {
   position: fixed;

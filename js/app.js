@@ -10,6 +10,7 @@ const STATUS_META = {
 const $ = (sel) => document.querySelector(sel);
 
 let tasks = [];
+let team = [];
 let attendance = null;
 let meetings = [];
 
@@ -467,18 +468,84 @@ function initTabs() {
 }
 
 /* ---------- boot ---------- */
+/* =========================================================
+   SCENE PIXEL ART — RUANG KERJA
+   ========================================================= */
+function renderOffice() {
+  const host = $("#office-scene");
+  if (!host || !team.length) return;
+  const attMap = {};
+  (attendance?.members || []).forEach((m) => { attMap[m.name] = m; });
+  host.innerHTML = team.map((p) => {
+    const m = attMap[p.name];
+    const last = m?.records?.[m.records.length - 1];
+    let dot = "var(--green)";
+    if (!p.koor && last) {
+      dot = last.status === "alfa" ? "var(--red)"
+        : last.status === "sakit" ? "var(--burst-1)"
+        : last.status === "izin" ? "var(--yellow)" : "var(--green)";
+    }
+    return `
+      <button class="ws${p.koor ? " koor" : ""}" data-name="${esc(p.name)}"
+              style="left:${p.left}%;bottom:${p.bottom}%;width:${p.w}%;aspect-ratio:${p.sw} / ${p.sh};z-index:${p.koor ? 4 : p.bottom <= 15 ? 5 : 3}"
+              aria-label="Jobdesk ${esc(p.name)}">
+        <span class="ws-pill"><i style="background:${dot}"></i><span class="txt"><b>${esc(p.name)}</b><em>${esc(p.koor ? p.role : p.division)}</em></span></span>
+        <img class="frame f-a" src="assets/pixel/ws-${p.slug}-a.png" alt="" />
+        <img class="frame f-b" src="assets/pixel/ws-${p.slug}-b.png" alt="" />
+      </button>`;
+  }).join("");
+  host.querySelectorAll(".ws").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const p = team.find((t) => t.name === btn.dataset.name);
+      if (p) openJobdesk(p);
+    });
+  });
+}
+
+function openJobdesk(p) {
+  const mine = tasks.filter((t) => t.pic === p.name);
+  const done = mine.filter((t) => t.status === "done").length;
+  const modal = $("#modal");
+  modal.innerHTML = `
+    <button class="close" id="modal-close" aria-label="Tutup">${ICON_X}</button>
+    <span class="status-pill ${p.koor ? "in_progress" : "todo"}">${p.koor ? "Koordinator" : esc(p.division)}</span>
+    <h3>${esc(p.name)}</h3>
+    <div class="kv">
+      <div><div class="k">Role</div><div class="v">${esc(p.role)}</div></div>
+      <div><div class="k">Divisi</div><div class="v">${esc(p.division || "—")}</div></div>
+      <div><div class="k">Tugas</div><div class="v">${mine.length ? `${done}/${mine.length} selesai` : `${(p.jobdesk || []).length} poin jobdesk`}</div></div>
+    </div>
+    <div class="section">
+      <h4>Jobdesk</h4>
+      <ul class="checklist">
+        ${(p.jobdesk || []).map((j) => `<li><span class="box"></span>${esc(j)}</li>`).join("")}
+      </ul>
+    </div>
+    ${mine.length ? `
+    <div class="section">
+      <h4>Tugas aktif</h4>
+      ${mine.map((t) => `
+        <p class="mini-task"><span class="status-pill ${t.status}">${esc(STATUS_META[t.status]?.label || t.status)}</span> ${esc(t.title)}</p>`).join("")}
+    </div>` : ""}
+  `;
+  $("#modal-overlay").classList.remove("hidden");
+  $("#modal-close").addEventListener("click", closeModal);
+}
+
 async function boot() {
   try {
-    const [tRes, aRes, mRes] = await Promise.all([
+    const [tRes, aRes, mRes, rRes] = await Promise.all([
       fetch("data/tasks.json"),
       fetch("data/attendance.json"),
       fetch("data/meetings.json"),
+      fetch("data/team.json"),
     ]);
     if (!tRes.ok) throw new Error("tasks.json tidak bisa dimuat");
     const tasksDoc = await tRes.json();
     tasks = tasksDoc.tasks || [];
     attendance = aRes.ok ? await aRes.json() : null;
     meetings = mRes.ok ? ((await mRes.json()).meetings || []) : [];
+    team = rRes.ok ? ((await rRes.json()).people || []) : [];
 
     const eventName = tasksDoc.event || "Papan Kinerja Panitia";
     $("#event-name").textContent = eventName;
@@ -489,6 +556,7 @@ async function boot() {
     renderBoard();
     renderAttendance();
     renderMeetings();
+    renderOffice();
     initTabs();
     checkReminder();
     setInterval(tickCountdowns, 1000);
