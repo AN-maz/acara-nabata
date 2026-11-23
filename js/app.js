@@ -32,6 +32,9 @@ const ICON = {
   alarm: svg(
     '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/>'
   ),
+  clipboard: svg(
+    '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>'
+  ),
 };
 
 /* varian tanpa margin (buat di dalam tombol/kotak) */
@@ -486,13 +489,22 @@ function renderOffice() {
         : last.status === "izin" ? "var(--yellow)" : "var(--green)";
     }
     return `
-      <button class="ws${p.koor ? " koor" : ""}" data-name="${esc(p.name)}"
+      <button class="ws${p.koor ? " koor" : ""}" data-name="${esc(p.name)}" data-slug="${esc(p.slug)}"
               style="left:${p.left}%;bottom:${p.bottom}%;width:${p.w}%;aspect-ratio:${p.sw} / ${p.sh};z-index:${p.koor ? 4 : p.bottom <= 15 ? 5 : 3}"
               aria-label="Jobdesk ${esc(p.name)}">
         <span class="ws-pill"><i style="background:${dot}"></i><span class="txt"><b>${esc(p.name)}</b><em>${esc(p.koor ? p.role : p.division)}</em></span></span>
         <img class="frame f-a" src="assets/pixel/ws-${p.slug}-a.png" alt="" />
         <img class="frame f-b" src="assets/pixel/ws-${p.slug}-b.png" alt="" />
-      </button>`;
+      </button>` +
+      (p.koor
+        ? ""
+        : `
+      <div class="walker" data-name="${esc(p.name)}" data-left="${p.left}" data-bottom="${p.bottom}"
+           style="left:${p.left}%;bottom:${p.bottom}%">
+        <span class="w-bubble">${ICON.clipboard}Lapor!</span>
+        <img class="w-a" src="assets/pixel/walk-${p.slug}-a.png" alt="" />
+        <img class="w-b" src="assets/pixel/walk-${p.slug}-b.png" alt="" />
+      </div>`);
   }).join("");
   host.querySelectorAll(".ws").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -500,6 +512,70 @@ function renderOffice() {
       if (p) openJobdesk(p);
     });
   });
+  initReportWalk(host);
+}
+
+/* ---------- animasi: anggota jalan ke meja koor buat lapor ---------- */
+function initReportWalk(host) {
+  const walkers = [...host.querySelectorAll(".walker")];
+  if (!walkers.length) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const SCENE_W = 760;
+  const SCENE_H = 470;
+  const SPOTS = [
+    { left: 45, bottom: 2 },
+    { left: 50, bottom: 0.5 },
+    { left: 55, bottom: 3.5 },
+  ];
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const dist = (a, b) =>
+    Math.hypot(((a.left - b.left) * SCENE_W) / 100, ((a.bottom - b.bottom) * SCENE_H) / 100);
+  const dur = (a, b) => Math.min(3.4, Math.max(1, dist(a, b) / 95));
+
+  /* ganti sprite meja: orang pergi → meja kosong; orang balik → orang duduk lagi */
+  const setDesk = (w, away) => {
+    const btn = [...host.querySelectorAll(".ws")].find((b) => b.dataset.name === w.dataset.name);
+    if (!btn) return;
+    const sfx = away ? "-desk" : "";
+    btn.querySelector(".f-a").src = `assets/pixel/ws-${btn.dataset.slug}${sfx}-a.png`;
+    btn.querySelector(".f-b").src = `assets/pixel/ws-${btn.dataset.slug}${sfx}-b.png`;
+    btn.classList.toggle("away", away);
+  };
+
+  let i = 0;
+  async function cycle() {
+    const w = walkers[i % walkers.length];
+    i += 1;
+    const home = { left: Number(w.dataset.left), bottom: Number(w.dataset.bottom) };
+    const spot = SPOTS[(i - 1) % SPOTS.length];
+
+    setDesk(w, true);          // kursinya kosong, orangnya berangkat
+    w.classList.add("on");
+    await wait(120);
+    const d1 = dur(home, spot);
+    w.style.setProperty("--walk", `${d1}s`);
+    w.style.left = `${spot.left}%`;
+    w.style.bottom = `${spot.bottom}%`;
+    await wait(d1 * 1000 + 150);
+
+    w.classList.add("report"); // berdiri di depan koor + bubble "Lapor!"
+    await wait(2800);
+    w.classList.remove("report");
+
+    const d2 = dur(spot, home);
+    w.style.setProperty("--walk", `${d2}s`);
+    w.style.left = `${home.left}%`;
+    w.style.bottom = `${home.bottom}%`;
+    await wait(d2 * 1000 + 150);
+
+    w.classList.remove("on");
+    setDesk(w, false);         // balik ke meja, duduk lagi
+    await wait(1200);
+    cycle();
+  }
+
+  setTimeout(cycle, 2000);
 }
 
 function openJobdesk(p) {

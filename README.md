@@ -18,6 +18,8 @@ Dashboard statis buat memantau kinerja tim kepanitiaan **Acara Nataba**: **kanba
 - **Ikon SVG ala Lucide** — semua emoji di UI diganti icon stroke SVG (konsisten kayak icon di React), termasuk tombol close dan centang checklist.
 - **Dekorasi crop dari poster acara** — glyph **七夕** di logo lingkaran merah dan bintang di header "Jadwal Rapat" di-crop langsung dari desain poster (file di `assets/`, background sudah transparan).
 - **Scene pixel art "Ruang Kerja"** — ilustrasi kantor retro di halaman awal: 7 panitia duduk di meja masing-masing (animasi ketik dua frame pakai CSS `steps()`), pill nama + divisi di atas kepala, meja koordinator beda setup (2 monitor + headset). **Klik karakter → popup jobdesk** (role, divisi, poin jobdesk, progres tugas). Spritenya digenerate script Python di `tools/make-pixel-assets.py`.
+- **Latar ala poster acara** — dinding ungu gelap + glow magenta, awan gelap di tepi, splash oranye + lingkaran merah berisi **七夕**, dan tulisan pixel **TANABATA TO ALGORITHM** (font 5x7 digambar sendiri), plus starburst/petir, jejak sirkuit PCB, jendela malam, dan bunting festival.
+- **Animasi lapor ke koordinator** — salah satu anggota secara bergantian ninggalin kursinya (meja jadi kosong), jalan ke depan meja koordinator, muncul bubble **"Lapor!"**, terus balik ke meja dan duduk lagi. Durasi jalan nyesuaiin jarak, sprite jalan 2 frame selang-seling, dan animasi mati otomatis kalau user nyala `prefers-reduced-motion`.
 - **Karakter 3D idle** — robot kecil di pojok kanan bawah (three.js), kedip, goyang, dan nengok ngikutin kursor.
 
 ## 📁 Struktur
@@ -30,7 +32,8 @@ Dashboard statis buat memantau kinerja tim kepanitiaan **Acara Nataba**: **kanba
 ├── assets/             # elemen crop dari poster (transparan)
 │   ├── kanji-nataba.png
 │   ├── decor-star.png
-│   └── pixel/          # sprite pixel art (room.png + 2 frame per orang)
+│   └── pixel/          # room.png (latar ala poster) + ws-<slug>-a/b (duduk)
+│                       # ws-<slug>-desk-a/b (meja kosong) + walk-<slug>-a/b (jalan lapor)
 ├── tools/
 │   └── make-pixel-assets.py  # generator sprite pixel art
 └── data/

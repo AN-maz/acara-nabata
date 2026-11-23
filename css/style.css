@@ -714,6 +714,51 @@ tfoot td { font-weight: 800; border-top: 1px solid var(--line-soft); color: var(
 .ws-pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex: none; }
 .ws.koor .ws-pill { border-color: var(--burst-2); }
 .ws.koor .ws-pill i { background: var(--burst-2); }
+
+/* --- karakter jalan ke meja koordinator buat ngasih laporan --- */
+.walker {
+  position: absolute;
+  width: 4.3%;
+  aspect-ratio: 30 / 44;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 7;
+  transition: left var(--walk, 2s) linear, bottom var(--walk, 2s) linear;
+}
+.walker img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+.walker .w-b { opacity: 0; animation: wsType 0.26s steps(1, end) infinite; }
+.walker.on { opacity: 1; }
+.walker.report .w-b { animation: none; opacity: 0; } /* berhenti, berdiri diam */
+.w-bubble {
+  position: absolute;
+  left: 70%;
+  top: -4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  background: rgba(16, 8, 36, 0.94);
+  border: 1px solid rgba(177, 79, 196, 0.5);
+  padding: 3px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transform: translateY(4px) scale(0.9);
+  transform-origin: bottom left;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.w-bubble .ico { color: var(--yellow); }
+.walker.report .w-bubble { opacity: 1; transform: none; }
 .swipe-hint {
   display: none; margin-left: auto;
   font-size: 11px; font-weight: 700; color: var(--muted);

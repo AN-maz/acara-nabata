@@ -2,7 +2,10 @@
 """Generate aset pixel art buat scene kantor Acara Nataba.
 
 Jalan: python3 tools/make-pixel-assets.py
-Output: assets/pixel/room.png + assets/pixel/ws-<slug>-{a,b}.png (2 frame animasi)
+Output: assets/pixel/room.png (latar ala poster Tanabata To Algorithm)
+        assets/pixel/ws-<slug>-{a,b}.png       (2 frame animasi duduk)
+        assets/pixel/ws-<slug>-desk-{a,b}.png  (meja kosong — orang lagi ngelapor)
+        assets/pixel/walk-<slug>-{a,b}.png     (2 frame jalan buat lapor ke koor)
 """
 import json
 import os
@@ -31,8 +34,71 @@ def shade(c, f=0.78):
     return tuple(int(v * f) for v in c)
 
 
-def workstation(shirt, koor=False, prop="mug"):
-    """Return [frame_a, frame_b] (RGBA). prop: mug | plant | none"""
+# ---------- font pixel 5x7 (buat tulisan di dinding) ----------
+FONT = {
+    "A": [".###.", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],
+    "B": ["####.", "#...#", "#...#", "####.", "#...#", "#...#", "####."],
+    "C": [".###.", "#...#", "#....", "#....", "#....", "#...#", ".###."],
+    "D": ["####.", "#...#", "#...#", "#...#", "#...#", "#...#", "####."],
+    "E": ["#####", "#....", "#....", "####.", "#....", "#....", "#####"],
+    "F": ["#####", "#....", "#....", "####.", "#....", "#....", "#...."],
+    "G": [".###.", "#...#", "#....", "#..##", "#...#", "#...#", ".###."],
+    "H": ["#...#", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],
+    "I": ["#####", "..#..", "..#..", "..#..", "..#..", "..#..", "#####"],
+    "J": ["..###", "...#.", "...#.", "...#.", "...#.", "#..#.", ".##.."],
+    "K": ["#...#", "#..#.", "#.#..", "##...", "#.#..", "#..#.", "#...#"],
+    "L": ["#....", "#....", "#....", "#....", "#....", "#....", "#####"],
+    "M": ["#...#", "##.##", "#.#.#", "#.#.#", "#...#", "#...#", "#...#"],
+    "N": ["#...#", "##..#", "#.#.#", "#..##", "#...#", "#...#", "#...#"],
+    "O": [".###.", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],
+    "P": ["####.", "#...#", "#...#", "####.", "#....", "#....", "#...."],
+    "Q": [".###.", "#...#", "#...#", "#...#", "#.#.#", "#..#.", ".##.#"],
+    "R": ["####.", "#...#", "#...#", "####.", "#.#..", "#..#.", "#...#"],
+    "S": [".####", "#....", "#....", ".###.", "....#", "....#", "####."],
+    "T": ["#####", "..#..", "..#..", "..#..", "..#..", "..#..", "..#.."],
+    "U": ["#...#", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],
+    "V": ["#...#", "#...#", "#...#", "#...#", "#...#", ".#.#.", "..#.."],
+    "W": ["#...#", "#...#", "#...#", "#.#.#", "#.#.#", "##.##", "#...#"],
+    "X": ["#...#", "#...#", ".#.#.", "..#..", ".#.#.", "#...#", "#...#"],
+    "Y": ["#...#", "#...#", ".#.#.", "..#..", "..#..", "..#..", "..#.."],
+    "Z": ["#####", "....#", "...#.", "..#..", ".#...", "#....", "#####"],
+}
+
+
+def text_width(text, scale):
+    w = 0
+    for ch in text.upper():
+        w += (3 if ch == " " else 5 + 1) * scale
+    return w - scale
+
+
+def draw_text(d, text, x, y, scale, fill, shadow=None):
+    """Tulis teks uppercase pake font 5x7. shadow=(dx,dy,color) buat outline."""
+    if shadow:
+        sx, sy, sc = shadow
+        draw_text(d, text, x + sx, y + sy, scale, sc)
+    cx = x
+    for ch in text.upper():
+        if ch == " ":
+            cx += 3 * scale
+            continue
+        glyph = FONT.get(ch)
+        if not glyph:
+            cx += 6 * scale
+            continue
+        for ry, row in enumerate(glyph):
+            for rx, c in enumerate(row):
+                if c == "#":
+                    d.rectangle(
+                        [cx + rx * scale, y + ry * scale,
+                         cx + (rx + 1) * scale - 1, y + (ry + 1) * scale - 1],
+                        fill=fill)
+        cx += 6 * scale
+
+
+def workstation(shirt, koor=False, prop="mug", empty=False):
+    """Return [frame_a, frame_b] (RGBA). prop: mug | plant | none
+    empty=True → meja doang (orangnya lagi pergi ngelapor), khusus non-koor."""
     if koor:
         W, H = 136, 88
     else:
@@ -109,24 +175,25 @@ def workstation(shirt, koor=False, prop="mug"):
             d.rectangle([26, 16, 69, 19], fill=CHAIR_D)
             d.rectangle([26, 30, 31, 48], fill=CHAIR_D)
             d.rectangle([64, 30, 69, 48], fill=CHAIR_D)
-            # kepala
-            d.rectangle([37, 6 + dy, 58, 14 + dy], fill=HAIR)
-            d.rectangle([39, 14 + dy, 56, 27 + dy], fill=SKIN)
-            d.rectangle([52, 14 + dy, 56, 27 + dy], fill=SKIN_D)
-            d.rectangle([43, 20 + dy, 44, 21 + dy], fill=DARK)
-            d.rectangle([51, 20 + dy, 52, 21 + dy], fill=DARK)
-            d.rectangle([46, 24 + dy, 49, 24 + dy], fill=SKIN_D)
-            # badan
-            d.rectangle([45, 27 + dy, 50, 31 + dy], fill=SKIN_D)
-            d.rectangle([33, 31, 62, 48], fill=shirt)
-            d.rectangle([33, 31, 62, 33], fill=shade(shirt, 0.85))
-            d.rectangle([33, 33, 39, 48], fill=shade(shirt))
-            d.rectangle([56, 33, 62, 48], fill=shade(shirt))
-            # tangan (typing)
-            hx = fr * 2
-            hy = fr
-            d.rectangle([36 + hx, 44 + hy, 42 + hx, 48 + hy], fill=shade(shirt))
-            d.rectangle([36 + hx, 46 + hy, 42 + hx, 48 + hy], fill=SKIN)
+            # kepala + badan + tangan (skip kalau lagi ngelapor)
+            if not empty:
+                d.rectangle([37, 6 + dy, 58, 14 + dy], fill=HAIR)
+                d.rectangle([39, 14 + dy, 56, 27 + dy], fill=SKIN)
+                d.rectangle([52, 14 + dy, 56, 27 + dy], fill=SKIN_D)
+                d.rectangle([43, 20 + dy, 44, 21 + dy], fill=DARK)
+                d.rectangle([51, 20 + dy, 52, 21 + dy], fill=DARK)
+                d.rectangle([46, 24 + dy, 49, 24 + dy], fill=SKIN_D)
+                # leher
+                d.rectangle([45, 27 + dy, 50, 31 + dy], fill=SKIN_D)
+                d.rectangle([33, 31, 62, 48], fill=shirt)
+                d.rectangle([33, 31, 62, 33], fill=shade(shirt, 0.85))
+                d.rectangle([33, 33, 39, 48], fill=shade(shirt))
+                d.rectangle([56, 33, 62, 48], fill=shade(shirt))
+                # tangan (typing)
+                hx = fr * 2
+                hy = fr
+                d.rectangle([36 + hx, 44 + hy, 42 + hx, 48 + hy], fill=shade(shirt))
+                d.rectangle([36 + hx, 46 + hy, 42 + hx, 48 + hy], fill=SKIN)
             # meja
             d.rectangle([6, 48, 89, 55], fill=WOOD_T)
             d.rectangle([6, 48, 89, 49], fill=WOOD_E)
@@ -157,44 +224,144 @@ def workstation(shirt, koor=False, prop="mug"):
 
 
 def room(width=760, height=470):
-    im = Image.new("RGBA", (width, height), (21, 10, 43, 255))
-    d = ImageDraw.Draw(im)
+    """Latar pixel art bergaya poster Tanabata To Algorithm: dinding ungu
+    gelap + glow magenta, awan gelap di tepi, splash oranye + lingkaran
+    merah berisi 七夕, dan tulisan TANABATA TO ALGORITHM (font pixel 5x7)."""
+    from math import hypot, cos, sin, pi
+
     HORIZON = 252
+    im = Image.new("RGBA", (width, height))
+    px = im.load()
+    cx, cy = 380, 96
+    EDGE = (34, 19, 66)      # ungu gelap (ujung poster)
+    MID = (76, 38, 122)      # ungu terang (tengah)
+    GLOW = (178, 74, 168)    # glow magenta di belakang logo
 
-    # dinding
-    d.rectangle([0, 0, width, HORIZON], fill=(236, 227, 208))
-    for x in range(0, width, 95):
-        d.line([(x, 0), (x, HORIZON)], fill=(224, 214, 191))
+    # --- gradient radial dinding ---
+    for x in range(width):
+        for y in range(HORIZON):
+            t = min(1.0, hypot((x - cx) / 470.0, (y - cy) / 340.0))
+            r = EDGE[0] + (MID[0] - EDGE[0]) * (1 - t)
+            g = EDGE[1] + (MID[1] - EDGE[1]) * (1 - t)
+            b = EDGE[2] + (MID[2] - EDGE[2]) * (1 - t)
+            k = max(0.0, 1.0 - hypot(x - cx, y - cy) / 230.0) * 0.55
+            if k:
+                r += (GLOW[0] - r) * k
+                g += (GLOW[1] - g) * k
+                b += (GLOW[2] - b) * k
+            px[x, y] = (int(r), int(g), int(b), 255)
+
+    d = ImageDraw.Draw(im)
+
+    # --- awan gelap nge-frame kiri, kanan, dan bawah dinding ---
+    CLOUD = (44, 24, 84)
+    CLOUD_D = (27, 15, 56)
+    for e in [(-45, 5, 62, 92, CLOUD), (-40, 80, 44, 180, CLOUD_D),
+              (-52, 155, 56, 258, CLOUD),
+              (702, -22, 806, 68, CLOUD), (712, 45, 802, 148, CLOUD_D),
+              (700, 125, 812, 245, CLOUD),
+              (35, 214, 155, 260, CLOUD_D), (185, 226, 305, 262, CLOUD_D),
+              (330, 212, 455, 258, CLOUD_D), (485, 224, 612, 262, CLOUD_D),
+              (635, 210, 762, 258, CLOUD_D)]:
+        d.ellipse(e[:4], fill=e[4])
+
     # baseboard
-    d.rectangle([0, HORIZON - 10, width, HORIZON], fill=(201, 184, 150))
+    d.rectangle([0, HORIZON - 8, width, HORIZON], fill=(58, 36, 104))
 
-    # lantai kayu
+    # --- lantai kayu (senada sama oranye di poster) ---
     d.rectangle([0, HORIZON, width, height], fill=(211, 162, 104))
     for y in range(HORIZON, height, 26):
         d.line([(0, y), (width, y)], fill=(196, 144, 92))
-    for i, y in enumerate(range(HORIZON + 26, height, 52)):
-        for x in range((i % 3) * 70, width, 175):
+    for i2, y in enumerate(range(HORIZON + 26, height, 52)):
+        for x in range((i2 % 3) * 70, width, 175):
             d.line([(x, y - 26), (x, y)], fill=(191, 138, 85))
 
-    # jendela (malam festival)
-    d.rectangle([90, 45, 255, 155], fill=(122, 90, 58))
-    d.rectangle([97, 52, 248, 148], fill=(42, 21, 80))
-    for sx, sy in [(115, 70), (150, 100), (190, 65), (230, 95), (135, 130), (215, 130)]:
+    # --- starburst + petir kuning (kiri atas, ala poster) ---
+    sx, sy = 212, 70
+    pts = []
+    for n in range(20):
+        ang = pi * n / 10 - pi / 2
+        rad = 34 if n % 2 == 0 else 15
+        pts.append((sx + cos(ang) * rad, sy + sin(ang) * rad))
+    d.polygon(pts, fill=(240, 148, 60))
+    pts = []
+    for n in range(10):
+        ang = pi * n / 5 - pi / 2
+        rad = 15 if n % 2 == 0 else 6
+        pts.append((sx + cos(ang) * rad, sy + sin(ang) * rad))
+    d.polygon(pts, fill=(245, 212, 66))
+    for dx, dy, ln in [(-1.0, -0.5, 76), (1.0, -0.55, 70),
+                       (-1.0, 0.32, 64), (0.9, 0.5, 46)]:
+        d.line([(sx + dx * 30, sy + dy * 30),
+                (sx + dx * (30 + ln), sy + dy * (30 + ln))],
+               fill=(245, 212, 66), width=3)
+
+    # --- bunting festival ---
+    d.line([(30, 24), (width - 30, 24)], fill=(150, 128, 176))
+    bcols = [(240, 138, 60), (245, 212, 66), (192, 57, 43), (61, 220, 151)]
+    for i2, x in enumerate(range(40, width - 60, 44)):
+        d.polygon([(x, 24), (x + 22, 24), (x + 11, 44)], fill=bcols[i2 % 4])
+
+    # --- jendela malam festival (kiri) ---
+    d.rectangle([55, 120, 175, 210], fill=(122, 90, 58))
+    d.rectangle([62, 127, 168, 203], fill=(36, 18, 74))
+    for sx, sy in [(75, 140), (98, 168), (140, 138), (155, 185), (85, 190)]:
         d.rectangle([sx, sy, sx + 2, sy + 2], fill=(245, 212, 66))
-    # bulan sabit beneran
-    d.ellipse([203, 63, 221, 81], fill=(245, 212, 66))
-    d.ellipse([211, 59, 229, 77], fill=(42, 21, 80))
-    d.line([(97, 100), (248, 100)], fill=(122, 90, 58))
-    d.line([(172, 52), (172, 148)], fill=(122, 90, 58))
+    d.ellipse([128, 143, 146, 161], fill=(245, 212, 66))
+    d.ellipse([136, 139, 154, 157], fill=(36, 18, 74))
+    d.line([(62, 165), (168, 165)], fill=(122, 90, 58))
+    d.line([(115, 127), (115, 203)], fill=(122, 90, 58))
 
-    # bunting festival
-    d.line([(30, 24), (width - 30, 24)], fill=(140, 120, 160))
-    cols = [(240, 138, 60), (245, 212, 66), (192, 57, 43), (61, 220, 151)]
-    for i, x in enumerate(range(40, width - 60, 44)):
-        c = cols[i % len(cols)]
-        d.polygon([(x, 24), (x + 22, 24), (x + 11, 44)], fill=c)
+    # --- splash oranye + lingkaran merah + 七夕 (pusat poster) ---
+    d.ellipse([296, 72, 464, 140], fill=(224, 145, 79))
+    d.ellipse([314, 54, 448, 112], fill=(224, 145, 79))
+    d.ellipse([306, 124, 456, 158], fill=(201, 111, 53))
+    d.ellipse([332, 48, 428, 144], fill=(194, 51, 43))
+    kanji_path = os.path.join(ROOT, "assets", "kanji-nataba.png")
+    if os.path.exists(kanji_path):
+        k = Image.open(kanji_path).convert("RGBA")
+        kw, kh = 92, 47
+        # pixelate 2x biar nyatu sama pixel art
+        k = k.resize((kw // 2, kh // 2), Image.NEAREST).resize((kw, kh), Image.NEAREST)
+        mask = Image.new("L", (kw, kh), 0)
+        ImageDraw.Draw(mask).ellipse([0, 0, kw - 1, kh - 1], fill=255)
+        im.paste(k, (cx - kw // 2, cy - kh // 2), mask)
 
-    # rak buku kanan
+    # --- tulisan TANABATA TO ALGORITHM ---
+    title = "TANABATA TO ALGORITHM"
+    tw = text_width(title, 2)
+    draw_text(d, title, cx - tw // 2, 156, 2, (255, 255, 255),
+              shadow=(2, 2, (54, 24, 58)))
+
+    # --- jejak sirkuit PCB kiri/kanan lingkaran ---
+    trace = (236, 232, 252)
+    for x0, x1, stub in [(262, 326, 1), (434, 508, -1)]:
+        d.line([(x0, 96), (x1, 96)], fill=trace, width=2)
+        for nx in (x0 + 6, x1 - 20):
+            d.ellipse([nx - 3, 93, nx + 3, 99], fill=trace)
+        d.line([(x1 - 20, 96), (x1 - 20, 96 + stub * 16)], fill=trace, width=2)
+        d.line([(x1 - 20, 96 + stub * 16), (x1 - 6, 96 + stub * 16)],
+               fill=trace, width=2)
+
+    # --- sparkle ---
+    for pxs, pys, col in [(262, 40, (245, 212, 66)), (472, 48, (255, 255, 255)),
+                          (300, 192, (255, 255, 255)), (494, 186, (245, 212, 66)),
+                          (196, 138, (255, 255, 255))]:
+        d.rectangle([pxs - 5, pys - 1, pxs + 5, pys + 1], fill=col)
+        d.rectangle([pxs - 1, pys - 5, pxs + 1, pys + 5], fill=col)
+
+    # --- lampu dinding (glow) dipindah ke kanan atas ---
+    glow = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    gd = ImageDraw.Draw(glow)
+    gd.rectangle([596, 30, 620, 44], fill=(245, 212, 66, 255))
+    for i2, r in enumerate(range(14, 76, 14)):
+        gd.rectangle([608 - r, 37 - r, 608 + r, 37 + r],
+                     fill=(245, 212, 66, max(6, 24 - i2 * 4)))
+    glow = glow.filter(__import__("PIL.ImageFilter", fromlist=["ImageFilter"]).GaussianBlur(10))
+    im = Image.alpha_composite(im, glow)
+    d = ImageDraw.Draw(im)
+
+    # --- rak buku kanan ---
     d.rectangle([530, 60, 670, 170], fill=(165, 118, 74))
     book_cols = [(192, 57, 43), (66, 110, 176), (61, 160, 120), (240, 138, 60),
                  (130, 80, 160), (245, 212, 66), (200, 80, 120)]
@@ -205,39 +372,74 @@ def room(width=760, height=470):
         while x < 658:
             w = 9 + (bi * 5) % 8
             h = 24 + (bi * 7) % 8
-            d.rectangle([x, shelf_y + 30 - h, x + w - 2, shelf_y + 30], fill=book_cols[bi % len(book_cols)])
+            d.rectangle([x, shelf_y + 30 - h, x + w - 2, shelf_y + 30],
+                        fill=book_cols[bi % len(book_cols)])
             x += w
             bi += 1
 
-    # pintu kanan
+    # --- pintu kanan ---
     d.rectangle([685, 90, 745, HORIZON], fill=(181, 133, 82))
     d.rectangle([693, 98, 737, 240], fill=(168, 120, 72))
     d.rectangle([730, 165, 735, 171], fill=(60, 66, 88))
 
-    # lukisan kecil
-    d.rectangle([300, 70, 345, 105], fill=(122, 90, 58))
-    d.rectangle([304, 74, 341, 101], fill=(240, 138, 60))
-    d.rectangle([304, 90, 341, 101], fill=(192, 57, 43))
-    d.rectangle([304, 74, 341, 84], fill=(245, 212, 66))
-
-    # lampu dinding (glow)
-    glow = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-    gd = ImageDraw.Draw(glow)
-    gd.rectangle([352, 30, 376, 44], fill=(245, 212, 66, 255))
-    for i, r in enumerate(range(14, 90, 14)):
-        gd.rectangle([364 - r, 37 - r, 364 + r, 37 + r],
-                     fill=(245, 212, 66, max(6, 26 - i * 4)))
-    glow = glow.filter(__import__("PIL.ImageFilter", fromlist=["ImageFilter"]).GaussianBlur(10))
-    im = Image.alpha_composite(im, glow)
-    d = ImageDraw.Draw(im)
-
-    # pot tanaman kiri & kanan (di pinggir biar gak ketutup workstation)
-    for px, py in [(10, 392), (706, 404)]:
-        d.rectangle([px + 6, py, px + 30, py + 14], fill=(90, 170, 90))
-        d.rectangle([px + 2, py + 12, px + 34, py + 34], fill=(192, 57, 43))
-        d.rectangle([px, py + 32, px + 36, py + 37], fill=(160, 45, 35))
-        d.rectangle([px + 12, py + 4, px + 16, py + 16], fill=(61, 160, 120))
+    # --- pot tanaman kiri & kanan di lantai ---
+    for pxp, pyp in [(10, 392), (706, 404)]:
+        d.rectangle([pxp + 6, pyp, pxp + 30, pyp + 14], fill=(90, 170, 90))
+        d.rectangle([pxp + 2, pyp + 12, pxp + 34, pyp + 34], fill=(192, 57, 43))
+        d.rectangle([pxp, pyp + 32, pxp + 36, pyp + 37], fill=(160, 45, 35))
+        d.rectangle([pxp + 12, pyp + 4, pxp + 16, pyp + 16], fill=(61, 160, 120))
     return im
+
+
+def walker(shirt):
+    """[frame_a, frame_b]: karakter berdiri lagi jalan (2 frame selang-seling)
+    — dipake buat animasi ngelapor ke meja koordinator."""
+    W, H = 30, 44
+    PANTS = (54, 60, 96)
+    PANTS_D = (44, 49, 80)
+    SHOE = (38, 30, 52)
+    frames = []
+    for fr in range(2):
+        im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        dy = fr  # bob naik-turun
+        # kaki (selang-seling)
+        if fr == 0:
+            d.rectangle([8, 32, 13, 41], fill=PANTS)
+            d.rectangle([7, 41, 14, 44], fill=SHOE)
+            d.rectangle([17, 32, 22, 39], fill=PANTS_D)
+            d.rectangle([16, 39, 23, 42], fill=SHOE)
+        else:
+            d.rectangle([8, 32, 13, 39], fill=PANTS_D)
+            d.rectangle([7, 39, 14, 42], fill=SHOE)
+            d.rectangle([17, 32, 22, 41], fill=PANTS)
+            d.rectangle([16, 41, 23, 44], fill=SHOE)
+        # badan
+        d.rectangle([7, 19, 23, 33], fill=shirt)
+        d.rectangle([7, 19, 23, 21], fill=shade(shirt, 0.85))
+        d.rectangle([7, 21, 12, 33], fill=shade(shirt))
+        d.rectangle([18, 21, 23, 33], fill=shade(shirt))
+        # lengan (ayun)
+        if fr == 0:
+            d.rectangle([4, 20, 7, 29], fill=shade(shirt))
+            d.rectangle([4, 27, 7, 30], fill=SKIN)
+            d.rectangle([23, 20, 26, 31], fill=shade(shirt))
+            d.rectangle([23, 29, 26, 32], fill=SKIN)
+        else:
+            d.rectangle([4, 20, 7, 31], fill=shade(shirt))
+            d.rectangle([4, 29, 7, 32], fill=SKIN)
+            d.rectangle([23, 20, 26, 29], fill=shade(shirt))
+            d.rectangle([23, 27, 26, 30], fill=SKIN)
+        # leher + kepala
+        d.rectangle([13, 17 + dy, 17, 21 + dy], fill=SKIN_D)
+        d.rectangle([9, 0 + dy, 22, 7 + dy], fill=HAIR)
+        d.rectangle([10, 7 + dy, 21, 17 + dy], fill=SKIN)
+        d.rectangle([18, 7 + dy, 21, 17 + dy], fill=SKIN_D)
+        d.rectangle([13, 10 + dy, 14, 11 + dy], fill=DARK)
+        d.rectangle([17, 10 + dy, 18, 11 + dy], fill=DARK)
+        d.rectangle([14, 14 + dy, 17, 15 + dy], fill=SKIN_D)
+        frames.append(im)
+    return frames
 
 
 def main():
@@ -257,11 +459,22 @@ def main():
     props = ["mug", "plant", "none", "mug", "plant", "mug", "none"]
     for i, p in enumerate(team["people"]):
         shirt = colors.get(p["slug"], (74, 144, 217))
-        a, b = workstation(shirt, koor=p.get("koor", False),
-                          prop=props[i % len(props)] if not p.get("koor") else "mug")
+        koor = p.get("koor", False)
+        prop = props[i % len(props)] if not koor else "mug"
+        a, b = workstation(shirt, koor=koor, prop=prop)
         a.save(os.path.join(OUT, f"ws-{p['slug']}-a.png"))
         b.save(os.path.join(OUT, f"ws-{p['slug']}-b.png"))
         print(f"ws-{p['slug']}-*.png ok")
+        if not koor:
+            # varian meja kosong (orangnya lagi ngelapor ke koor)
+            ea, eb = workstation(shirt, prop=prop, empty=True)
+            ea.save(os.path.join(OUT, f"ws-{p['slug']}-desk-a.png"))
+            eb.save(os.path.join(OUT, f"ws-{p['slug']}-desk-b.png"))
+            # sprite jalan
+            wa, wb = walker(shirt)
+            wa.save(os.path.join(OUT, f"walk-{p['slug']}-a.png"))
+            wb.save(os.path.join(OUT, f"walk-{p['slug']}-b.png"))
+            print(f"desk+walk-{p['slug']}-*.png ok")
 
 
 if __name__ == "__main__":
