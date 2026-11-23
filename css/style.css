@@ -718,7 +718,7 @@ tfoot td { font-weight: 800; border-top: 1px solid var(--line-soft); color: var(
 /* --- karakter jalan ke meja koordinator buat ngasih laporan --- */
 .walker {
   position: absolute;
-  width: 4.3%;
+  width: 4%; /* ≈30px di scene 760 — 1:1 sama sprite aslinya biar tajam */
   aspect-ratio: 30 / 44;
   opacity: 0;
   pointer-events: none;
@@ -732,6 +732,17 @@ tfoot td { font-weight: 800; border-top: 1px solid var(--line-soft); color: var(
   width: 100%;
   height: 100%;
   image-rendering: pixelated;
+}
+/* bayangan tipis di bawah kaki biar gak keliatan ngambang */
+.walker::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: -2px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
 }
 .walker .w-b { opacity: 0; animation: wsType 0.26s steps(1, end) infinite; }
 .walker.on { opacity: 1; }

@@ -500,7 +500,7 @@ function renderOffice() {
         ? ""
         : `
       <div class="walker" data-name="${esc(p.name)}" data-left="${p.left}" data-bottom="${p.bottom}"
-           style="left:${p.left}%;bottom:${p.bottom}%">
+           style="left:${p.left + p.w / 2 - 2}%;bottom:${p.bottom}%">
         <span class="w-bubble">${ICON.clipboard}Lapor!</span>
         <img class="w-a" src="assets/pixel/walk-${p.slug}-a.png" alt="" />
         <img class="w-b" src="assets/pixel/walk-${p.slug}-b.png" alt="" />
@@ -515,23 +515,114 @@ function renderOffice() {
   initReportWalk(host);
 }
 
-/* ---------- animasi: anggota jalan ke meja koor buat lapor ---------- */
+/* ---------- animasi: anggota jalan ke meja koor buat lapor ----------
+   Rutenya digambar logis, murni sumbu X/Y (gak diagonal):
+   1. baris belakang: geser ke celah bebas antar meja di depth barisnya sendiri
+   2. turun lurus lewat celah itu sampai koridor depan (y kecil = depan kamera)
+   3. jalan di koridor depan — sejajar garis lantai, di depan semua meja baris
+      depan, dan gak pernah lewat di atas meja koor
+   4. berhenti DI SAMPING meja koor (belum nyampe mejanya) + bubble "Lapor!"
+   Trek balik = rute yang sama dibalik. */
 function initReportWalk(host) {
   const walkers = [...host.querySelectorAll(".walker")];
   if (!walkers.length) return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  const SCENE_W = 760;
-  const SCENE_H = 470;
-  const SPOTS = [
-    { left: 45, bottom: 2 },
-    { left: 50, bottom: 0.5 },
-    { left: 55, bottom: 3.5 },
+  const W = 760;
+  const H = 470;
+  const pctX = (v) => (v * W) / 100; // % horizontal → px
+  const pctY = (v) => (v * H) / 100; // % bottom    → px (0 = pinggir bawah)
+  const MARGIN = 3; // jarak minimal sprite ↔ meja lain
+  const CORRIDOR = 4; // koridor depan (px dari pinggir bawah)
+  const SPEED = 95; // px/detik
+
+  const koor = team.find((t) => t.koor);
+  const frontRow = (p) => team.filter((t) => t !== p && !t.koor && t.bottom <= 15);
+  const backRow = (p) => team.filter((t) => t !== p && !t.koor && t.bottom > 15);
+
+  /* interval x yang harus dihindari (pakai koordinat px) */
+  const boxes = (list) => list.map((t) => [pctX(t.left), pctX(t.left + t.w)]);
+  const PLANTS = [
+    [10, 46],
+    [706, 742],
   ];
+  const KOOR_BOX = [pctX(koor.left), pctX(koor.left + koor.w)];
+
+  /* Semua koordinat = TEPI KIRI sprite (style.left) & kaki (style.bottom),
+     jadi sprite jalan nutupin [x, x+WALK] secara horizontal. */
+  const WALK = 30.4; // 4% dari 760
+  const overlapX = (x, [a, b]) => x < b + MARGIN && x + WALK > a - MARGIN;
+  const anyBlocked = (x, blocked) => blocked.some((box) => overlapX(x, box));
+
+  /* tepi-kiri x yang bebas dari semua blok; celah terdekat ke x */
+  const freeX = (cx, blocked) => {
+    const segs = blocked
+      .map(([a, b]) => [Math.max(0, a - WALK - MARGIN), Math.min(W, b + MARGIN)])
+      .sort((m, n) => m[0] - n[0]);
+    const ivs = [];
+    let cursor = 0;
+    for (const [a, b] of segs) {
+      if (a > cursor) ivs.push([cursor, a]);
+      cursor = Math.max(cursor, b);
+    }
+    if (cursor < W - WALK) ivs.push([cursor, W - WALK]);
+    let best = cx;
+    let dist = Infinity;
+    for (const [a, b] of ivs) {
+      const c = Math.min(Math.max(cx, a), b);
+      if (Math.abs(c - cx) < dist) {
+        dist = Math.abs(c - cx);
+        best = c;
+      }
+    }
+    return best;
+  };
+
+  const buildRoute = (p) => {
+    const homeX = pctX(p.left + p.w / 2) - WALK / 2; // jajar sama tengah meja
+    const y0 = pctY(p.bottom);
+    const back = p.bottom > 15;
+
+    // turun lurus bebas dari meja baris depan + koor + pot.
+    // meja baris belakang cuma ngeblok kalo ini orang baris belakang
+    // (orang baris depan gak pernah nyampe depth segitu — aman)
+    const dropBlocked = [
+      ...boxes(frontRow(p)),
+      ...(back ? boxes(backRow(p)) : []),
+      KOOR_BOX,
+      ...PLANTS,
+    ];
+    // baris belakang: geser mendatar di depth barisnya sendiri bebas dari
+    // meja baris belakang lain (meja sendiri boleh — berdiri depan kursi)
+    const sideBlocked = boxes(backRow(p));
+    const dropX = back
+      ? freeX(homeX, [...dropBlocked, ...sideBlocked])
+      : anyBlocked(homeX, dropBlocked)
+        ? freeX(homeX, dropBlocked)
+        : homeX;
+
+    // titik lapor: di samping kiri/kanan meja koor, BELUM nyentuh mejanya
+    const spot = dropX < 380 ? 246 : 476; // celah ±31px dari tepi meja koor
+
+    const legs = [{ x: homeX, y: y0 }];
+    if (Math.abs(dropX - homeX) > 3) legs.push({ x: dropX, y: y0 });
+    legs.push({ x: dropX, y: CORRIDOR });
+    legs.push({ x: spot, y: CORRIDOR });
+    return legs;
+  };
+
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const dist = (a, b) =>
-    Math.hypot(((a.left - b.left) * SCENE_W) / 100, ((a.bottom - b.bottom) * SCENE_H) / 100);
-  const dur = (a, b) => Math.min(3.4, Math.max(1, dist(a, b) / 95));
+  const moveLegs = async (w, legs) => {
+    for (let i = 1; i < legs.length; i++) {
+      const a = legs[i - 1];
+      const b = legs[i];
+      const d = Math.min(3.4, Math.max(0.35, Math.hypot(b.x - a.x, b.y - a.y) / SPEED));
+      w.style.setProperty("--walk", `${d}s`);
+      w.style.left = `${(b.x / W) * 100}%`;
+      w.style.bottom = `${(b.y / H) * 100}%`;
+      await wait(d * 1000 + 220); // jeda 220ms di tiap belokan biar baca sebagai "berhenti terus nyambung"
+    }
+  };
 
   /* ganti sprite meja: orang pergi → meja kosong; orang balik → orang duduk lagi */
   const setDesk = (w, away) => {
@@ -547,30 +638,29 @@ function initReportWalk(host) {
   async function cycle() {
     const w = walkers[i % walkers.length];
     i += 1;
-    const home = { left: Number(w.dataset.left), bottom: Number(w.dataset.bottom) };
-    const spot = SPOTS[(i - 1) % SPOTS.length];
+    const p = team.find((t) => t.name === w.dataset.name);
+    if (!p) return cycle();
+    const legs = buildRoute(p);
 
-    setDesk(w, true);          // kursinya kosong, orangnya berangkat
+    // snap ke titik awal rute dulu (masih transparan) biar langkah pertama
+    // gak nyambung diagonal dari posisi inline awal renderer
+    w.style.setProperty("--walk", "0s");
+    w.style.left = `${(legs[0].x / W) * 100}%`;
+    w.style.bottom = `${(legs[0].y / H) * 100}%`;
+    void w.offsetWidth; // paksa reflow biar snap-nya kejadian sebelum transisi
+
+    setDesk(w, true); // kursinya kosong, orangnya berangkat
     w.classList.add("on");
-    await wait(120);
-    const d1 = dur(home, spot);
-    w.style.setProperty("--walk", `${d1}s`);
-    w.style.left = `${spot.left}%`;
-    w.style.bottom = `${spot.bottom}%`;
-    await wait(d1 * 1000 + 150);
+    await wait(140);
+    await moveLegs(w, legs);
 
-    w.classList.add("report"); // berdiri di depan koor + bubble "Lapor!"
+    w.classList.add("report"); // berdiri di samping meja koor + bubble "Lapor!"
     await wait(2800);
     w.classList.remove("report");
 
-    const d2 = dur(spot, home);
-    w.style.setProperty("--walk", `${d2}s`);
-    w.style.left = `${home.left}%`;
-    w.style.bottom = `${home.bottom}%`;
-    await wait(d2 * 1000 + 150);
-
+    await moveLegs(w, [...legs].reverse()); // trek balik = rute dibalik
     w.classList.remove("on");
-    setDesk(w, false);         // balik ke meja, duduk lagi
+    setDesk(w, false); // balik ke meja, duduk lagi
     await wait(1200);
     cycle();
   }
