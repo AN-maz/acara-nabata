@@ -28,6 +28,14 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+html { background: var(--bg); }
+
+/* scrollbar gelap biar gak ada strip putih di tepi kanan */
+* { scrollbar-width: thin; scrollbar-color: #4a3fb5 #1f1038; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #1f1038; }
+::-webkit-scrollbar-thumb { background: #4a3fb5; border-radius: 999px; }
+
 body {
   font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   background:
@@ -51,21 +59,29 @@ body::before {
 .hidden { display: none !important; }
 .muted { color: var(--muted); }
 
-/* petir kuning dekoratif di pojok */
-body::after {
-  content: "";
-  position: fixed;
-  top: -40px;
-  right: -60px;
-  width: 260px;
-  height: 260px;
-  background:
-    linear-gradient(135deg, transparent 46%, rgba(245, 212, 66, 0.5) 47%, rgba(245, 212, 66, 0.5) 50%, transparent 51%),
-    linear-gradient(135deg, transparent 62%, rgba(243, 156, 18, 0.35) 63%, rgba(243, 156, 18, 0.35) 65%, transparent 66%);
-  transform: rotate(12deg);
-  pointer-events: none;
-  z-index: 0;
+/* icon SVG (Lucide-style) + elemen crop dari poster */
+.ico {
+  width: 14px;
+  height: 14px;
+  vertical-align: -2px;
+  margin-right: 6px;
+  flex-shrink: 0;
 }
+.tab .ico { margin-right: 7px; vertical-align: -3px; }
+.ico-plain { margin-right: 0; }
+
+/* zap kuning nempel di judul (pakai ::after biar gak kesapu JS) */
+#event-name::after {
+  content: "";
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  margin-left: 9px;
+  vertical-align: -1px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23f5d442" stroke="%231a0b33" stroke-width="1.5" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>') no-repeat center / contain;
+}
+
+.meet-head .ico-star { height: 15px; width: auto; }
 
 h1, h2, h3, .stat .value, .col-head h2, .countdown strong {
   font-family: "Montserrat", "Plus Jakarta Sans", sans-serif;
@@ -95,8 +111,9 @@ h1, h2, h3, .stat .value, .col-head h2, .countdown strong {
   font-size: 20px;
   color: #fff;
   background: radial-gradient(circle at 35% 30%, var(--burst-2), var(--badge));
-  box-shadow: 0 0 34px rgba(224, 90, 43, 0.6), 0 8px 22px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.4);
 }
+.logo img { width: 76%; }
 
 .brand h1 {
   font-size: clamp(19px, 2.6vw, 26px);
@@ -132,15 +149,13 @@ h1, h2, h3, .stat .value, .col-head h2, .countdown strong {
 .tab:hover { color: var(--text); }
 .tab.active {
   color: #fff;
-  background: linear-gradient(135deg, var(--burst-1), var(--badge));
-  box-shadow: 0 6px 18px rgba(224, 90, 43, 0.45);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  background: var(--burst-2);
 }
 
 /* ---------- Stats ---------- */
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   padding: 16px clamp(16px, 4vw, 40px) 4px;
   position: relative;
@@ -152,11 +167,12 @@ h1, h2, h3, .stat .value, .col-head h2, .countdown strong {
   border: 1px solid var(--line-soft);
   border-radius: var(--radius);
   padding: 14px 16px;
-  box-shadow: 0 10px 26px rgba(10, 4, 24, 0.4);
+  box-shadow: 0 6px 16px rgba(10, 4, 24, 0.3);
 }
 
-.stat .label { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
-.stat .value { font-size: 26px; font-weight: 800; margin-top: 4px; color: var(--bolt); }
+.stat .label { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; text-wrap: balance; }
+.stat .value { font-size: 26px; font-weight: 800; margin-top: 4px; color: var(--text); }
+.stat .value.warn { color: var(--red); }
 .stat .value small { font-size: 14px; color: var(--muted); font-weight: 600; }
 
 .stat .bar {
@@ -193,7 +209,7 @@ h1, h2, h3, .stat .value, .col-head h2, .countdown strong {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: var(--bolt);
+  color: var(--text);
 }
 
 .meet-card {
@@ -203,7 +219,7 @@ h1, h2, h3, .stat .value, .col-head h2, .countdown strong {
   padding: 14px 16px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 26px rgba(10, 4, 24, 0.45);
+  box-shadow: 0 6px 16px rgba(10, 4, 24, 0.3);
 }
 
 /* strip oranye kiri ala aksen letusan */
@@ -242,21 +258,15 @@ h1, h2, h3, .stat .value, .col-head h2, .countdown strong {
 }
 .meet-card .countdown span { font-size: 12px; color: var(--muted); font-weight: 700; }
 
-/* state mendesak: ≤ 1 hari */
+/* state mendesak: ≤ 1 hari — cukup border oranye, tanpa glow/berkedip */
 .meet-card.urgent {
   border-color: rgba(240, 138, 60, 0.6);
-  box-shadow: 0 0 26px rgba(224, 90, 43, 0.35), 0 10px 26px rgba(10, 4, 24, 0.45);
 }
-.meet-card.urgent .countdown strong { color: var(--burst-1); animation: pulse 1.4s ease-in-out infinite; }
-.meet-card.urgent::before { background: linear-gradient(180deg, var(--bolt), var(--burst-2)); }
+.meet-card.urgent .countdown strong { color: var(--burst-1); }
+.meet-card.urgent::before { background: var(--burst-1); }
 
 .meet-card.past { opacity: 0.55; }
 .meet-card.past .countdown strong { color: var(--muted); font-size: 20px; }
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.55; }
-}
 
 .pill-time {
   font-weight: 800;
@@ -289,7 +299,7 @@ main { padding: 8px clamp(16px, 4vw, 40px) 60px; position: relative; z-index: 2;
   border-radius: var(--radius);
   padding: 14px;
   min-height: 220px;
-  box-shadow: 0 12px 30px rgba(10, 4, 24, 0.45);
+  box-shadow: 0 6px 18px rgba(10, 4, 24, 0.32);
 }
 
 .col-head {
@@ -312,7 +322,7 @@ main { padding: 8px clamp(16px, 4vw, 40px) 60px; position: relative; z-index: 2;
   border-radius: 999px;
 }
 
-.dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
 .column.todo .dot { background: var(--yellow); color: var(--yellow); }
 .column.progress .dot { background: var(--burst-1); color: var(--burst-1); }
 .column.done .dot { background: var(--green); color: var(--green); }
@@ -344,7 +354,7 @@ main { padding: 8px clamp(16px, 4vw, 40px) 60px; position: relative; z-index: 2;
 .card:hover {
   transform: translateY(-3px);
   border-color: rgba(240, 138, 60, 0.55);
-  box-shadow: 0 12px 28px rgba(10, 4, 24, 0.55), 0 0 18px rgba(224, 90, 43, 0.2);
+  box-shadow: 0 8px 18px rgba(10, 4, 24, 0.4);
 }
 
 .card.p-high { border-left-color: var(--red); }
@@ -420,7 +430,7 @@ main { padding: 8px clamp(16px, 4vw, 40px) 60px; position: relative; z-index: 2;
   border-radius: var(--radius);
   padding: 18px;
   overflow-x: auto;
-  box-shadow: 0 12px 30px rgba(10, 4, 24, 0.45);
+  box-shadow: 0 6px 18px rgba(10, 4, 24, 0.32);
 }
 
 .panel h2 { font-size: 16px; font-weight: 800; margin-bottom: 4px; font-family: "Montserrat", sans-serif; }
@@ -434,7 +444,7 @@ thead th {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: var(--bolt);
+  color: var(--muted);
   border-bottom: 1px solid var(--line-soft);
   font-weight: 800;
 }
@@ -481,7 +491,7 @@ tfoot td { font-weight: 800; border-top: 1px solid var(--line-soft); color: var(
   border: 1px solid rgba(240, 138, 60, 0.35);
   border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65), 0 0 40px rgba(224, 90, 43, 0.18);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
 }
 
 .modal .close {
@@ -535,7 +545,7 @@ tfoot td { font-weight: 800; border-top: 1px solid var(--line-soft); color: var(
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: var(--bolt);
+  color: var(--muted);
   margin-bottom: 8px;
   font-weight: 800;
 }
@@ -574,9 +584,8 @@ tfoot td { font-weight: 800; border-top: 1px solid var(--line-soft); color: var(
   letter-spacing: 0.08em;
   padding: 5px 12px;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--burst-1), var(--badge));
+  background: var(--burst-2);
   color: #fff;
-  box-shadow: 0 6px 16px rgba(224, 90, 43, 0.4);
   margin-bottom: 12px;
 }
 
@@ -596,7 +605,6 @@ tfoot td { font-weight: 800; border-top: 1px solid var(--line-soft); color: var(
   padding: 12px 14px;
   min-width: 78px;
   text-align: center;
-  box-shadow: 0 0 18px rgba(224, 90, 43, 0.2);
 }
 .reminder .r-unit b {
   display: block;
@@ -606,7 +614,7 @@ tfoot td { font-weight: 800; border-top: 1px solid var(--line-soft); color: var(
   color: var(--bolt);
   line-height: 1;
 }
-.reminder .r-unit.hot b { color: var(--burst-1); animation: pulse 1.4s ease-in-out infinite; }
+.reminder .r-unit.hot b { color: var(--burst-1); }
 .reminder .r-unit i { font-style: normal; font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
 
 .reminder .r-info {
@@ -628,11 +636,11 @@ tfoot td { font-weight: 800; border-top: 1px solid var(--line-soft); color: var(
   color: #fff;
   padding: 13px 18px;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--burst-1), var(--badge));
-  box-shadow: 0 10px 26px rgba(224, 90, 43, 0.45);
+  background: var(--burst-2);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
   transition: transform 0.15s, box-shadow 0.15s;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(224, 90, 43, 0.55); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); }
 
 /* ---------- 3D character ---------- */
 /* z-index 1: di belakang panel/board, jadi di layar sempit dia cuma
@@ -669,6 +677,7 @@ tfoot td { font-weight: 800; border-top: 1px solid var(--line-soft); color: var(
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
   .board { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
   #character { width: 130px; height: 160px; opacity: 0.9; }
   .meet-card .countdown strong { font-size: 26px; }
 }

@@ -14,16 +14,21 @@ Dashboard statis buat memantau kinerja tim kepanitiaan **Acara Nataba**: **kanba
 - **Detail tugas** — klik kartu, muncul modal: deskripsi, checklist, catatan, dan flag **Terlambat** kalau deadline lewat tapi belum selesai.
 - **Rekap kehadiran** — tabel per anggota: hadir / izin / sakit / alfa + bar persentase kehadiran, plus total dan rata-rata tim.
 - **Pengingat rapat + countdown live** — strip "Jadwal Rapat" di atas papan dengan hitung mundur per detik. Rapat yang tinggal **≤ 1 hari** menyala oranye (state urgent), dan **popup reminder muncul otomatis setiap halaman dibuka** sampai kamu tutup.
-- **Ringkasan atas** — total tugas, % selesai, yang sedang dikerjakan, jumlah anggota, kehadiran rata-rata.
+- **Ringkasan atas** — total tugas, % selesai, yang sedang dikerjakan, tugas terlambat, jumlah anggota, kehadiran rata-rata.
+- **Ikon SVG ala Lucide** — semua emoji di UI diganti icon stroke SVG (konsisten kayak icon di React), termasuk tombol close dan centang checklist.
+- **Dekorasi crop dari poster acara** — glyph **七夕** di logo lingkaran merah dan bintang di header "Jadwal Rapat" di-crop langsung dari desain poster (file di `assets/`, background sudah transparan).
 - **Karakter 3D idle** — robot kecil di pojok kanan bawah (three.js), kedip, goyang, dan nengok ngikutin kursor.
 
 ## 📁 Struktur
 
 ```
 ├── index.html          # entry point
-├── css/style.css       # tema dark modern
-├── js/app.js           # render kanban, modal, rekap kehadiran
+├── css/style.css       # tema pop-art festival (minimalis)
+├── js/app.js           # render kanban, modal, rekap kehadiran, countdown
 ├── js/character.js     # karakter 3D idle (three.js via CDN)
+├── assets/             # elemen crop dari poster (transparan)
+│   ├── kanji-nataba.png
+│   └── decor-star.png
 └── data/
     ├── tasks.json      # ← input tugas tim di sini
     ├── attendance.json # ← input kehadiran di sini

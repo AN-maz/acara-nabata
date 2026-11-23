@@ -15,6 +15,34 @@ let meetings = [];
 
 const DAY_MS = 86400000; // 24 jam — ambang "tinggal 1 hari" buat popup
 
+/* ---------- icon (SVG stroke ala Lucide, gaya icon di React) ---------- */
+const svg = (paths, size = 14) =>
+  `<svg class="ico" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" ` +
+  `stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ` +
+  `aria-hidden="true">${paths}</svg>`;
+
+const ICON = {
+  clock: svg('<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'),
+  calendar: svg(
+    '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>' +
+      '<line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'
+  ),
+  pin: svg('<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>'),
+  alarm: svg(
+    '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/>'
+  ),
+};
+
+/* varian tanpa margin (buat di dalam tombol/kotak) */
+const ICON_X =
+  '<svg class="ico ico-plain" width="15" height="15" viewBox="0 0 24 24" fill="none" ' +
+  'stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">' +
+  '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+const ICON_CHECK =
+  '<svg class="ico ico-plain" width="12" height="12" viewBox="0 0 24 24" fill="none" ' +
+  'stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" ' +
+  'aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+
 /* ---------- util ---------- */
 function fmtDate(iso) {
   if (!iso) return "—";
@@ -54,10 +82,12 @@ function renderStats() {
   const pct = total ? Math.round((done / total) * 100) : 0;
 
   const att = attendanceSummary();
+  const overdue = tasks.filter((t) => isOverdue(t)).length;
   const cards = [
     { label: "Total Tugas", value: total, bar: null },
     { label: "Selesai", value: `${pct}<small>%</small>`, bar: pct },
     { label: "Sedang Dikerjakan", value: doing, bar: null },
+    { label: "Tugas Terlambat", value: overdue, bar: null, warn: overdue > 0 },
     { label: "Anggota Tim", value: attendance ? attendance.members.length : 0, bar: null },
     { label: "Kehadiran Rata-rata", value: `${att.avg}<small>%</small>`, bar: att.avg },
   ];
@@ -67,7 +97,7 @@ function renderStats() {
       (c) => `
       <div class="stat">
         <div class="label">${c.label}</div>
-        <div class="value">${c.value}</div>
+        <div class="value${c.warn ? " warn" : ""}">${c.value}</div>
         ${c.bar !== null ? `<div class="bar"><span style="width:${c.bar}%"></span></div>` : ""}
       </div>`
     )
@@ -90,7 +120,7 @@ function cardEl(t) {
       <span class="badge">${esc(t.division || "Tanpa divisi")}</span>
       <span class="avatar" title="${esc(t.pic)}">${initials(t.pic)}</span>
       <span>${esc(t.pic || "—")}</span>
-      ${overdue ? '<span class="badge overdue">Terlambat</span>' : `<span>⏱ ${fmtDate(t.deadline)}</span>`}
+      ${overdue ? '<span class="badge overdue">Terlambat</span>' : `<span>${ICON.clock}${fmtDate(t.deadline)}</span>`}
     </div>
     ${
       cl.length
@@ -122,7 +152,7 @@ function renderBoard() {
 
     const body = col.querySelector(".col-body");
     if (!items.length) {
-      body.innerHTML = `<p class="empty">Belum ada tugas 🎉</p>`;
+      body.innerHTML = `<p class="empty">Belum ada tugas</p>`;
     } else {
       items.forEach((t) => body.appendChild(cardEl(t)));
     }
@@ -136,7 +166,7 @@ function openModal(t) {
   const overdue = isOverdue(t);
 
   $("#modal").innerHTML = `
-    <button class="close" id="modal-close" aria-label="Tutup">✕</button>
+    <button class="close" id="modal-close" aria-label="Tutup">${ICON_X}</button>
     <span class="status-pill ${t.status}">${STATUS_META[t.status]?.label || t.status}</span>
     <h3>${esc(t.title)}</h3>
 
@@ -162,7 +192,7 @@ function openModal(t) {
                ${cl
                  .map(
                    (c) =>
-                     `<li class="${c.done ? "ok" : ""}"><span class="box">${c.done ? "✓" : ""}</span>${esc(c.item)}</li>`
+                     `<li class="${c.done ? "ok" : ""}"><span class="box">${c.done ? ICON_CHECK : ""}</span>${esc(c.item)}</li>`
                  )
                  .join("")}
              </ul>
@@ -286,7 +316,7 @@ function renderMeetings() {
   }
 
   host.innerHTML =
-    `<div class="meet-head">⏰ Jadwal Rapat</div>` +
+    `<div class="meet-head"><img class="ico-star" src="assets/decor-star.png" alt="" aria-hidden="true" />Jadwal Rapat</div>` +
     list
       .map((m) => {
         const rem = new Date(m.datetime).getTime() - Date.now();
@@ -296,8 +326,8 @@ function renderMeetings() {
         <article class="meet-card${past ? " past" : urgent ? " urgent" : ""}" data-rem="${esc(m.datetime)}">
           <div class="m-title">${esc(m.title)}</div>
           <div class="m-meta">
-            <span class="pill-time${urgent ? " hot" : ""}">📅 ${fmtDateTime(m.datetime)}</span>
-            <span>📍 ${esc(m.place || "—")}</span>
+            <span class="pill-time${urgent ? " hot" : ""}">${ICON.calendar}${fmtDateTime(m.datetime)}</span>
+            <span>${ICON.pin}${esc(m.place || "—")}</span>
           </div>
           <div class="countdown">
             <strong data-countdown>—</strong>
@@ -369,7 +399,7 @@ function checkReminder() {
   const hot = m.ms <= DAY_MS;
 
   $("#reminder").innerHTML = `
-    <span class="r-badge">⏰ Pengingat Rapat</span>
+    <span class="r-badge">${ICON.alarm}Pengingat Rapat</span>
     <h3>${esc(m.title)}</h3>
     <div class="r-count" id="r-count">
       <div class="r-unit${hot ? " hot" : ""}"><b data-unit="d">${p.d}</b><i>hari</i></div>
@@ -377,7 +407,7 @@ function checkReminder() {
       <div class="r-unit${hot ? " hot" : ""}"><b data-unit="m">${pad(p.m)}</b><i>menit</i></div>
       <div class="r-unit${hot ? " hot" : ""}"><b data-unit="s">${pad(p.s)}</b><i>detik</i></div>
     </div>
-    <p class="r-info">📅 ${fmtDateTime(m.datetime)} · 📍 ${esc(m.place || "—")}</p>
+    <p class="r-info">${ICON.calendar}${fmtDateTime(m.datetime)} <span class="r-dot">·</span> ${ICON.pin}${esc(m.place || "—")}</p>
     ${m.note ? `<div class="section"><h4>Catatan</h4><p>${esc(m.note)}</p></div>` : ""}
     <button class="btn-primary" id="reminder-close">Siap, mengerti!</button>`;
 
