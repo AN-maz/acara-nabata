@@ -11,6 +11,9 @@ const $ = (sel) => document.querySelector(sel);
 
 let tasks = [];
 let attendance = null;
+let meetings = [];
+
+const DAY_MS = 86400000; // 24 jam — ambang "tinggal 1 hari" buat popup
 
 /* ---------- util ---------- */
 function fmtDate(iso) {
@@ -251,6 +254,162 @@ function renderAttendance() {
     </table>`;
 }
 
+/* ---------- jadwal rapat + countdown ---------- */
+function fmtDateTime(iso) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso || "—";
+  const hari = d.toLocaleDateString("id-ID", { weekday: "long" });
+  const tgl = d.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+  const jam = d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }).replace(".", ":");
+  return `${hari}, ${tgl} · ${jam}`;
+}
+
+function splitRemaining(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  return {
+    d: Math.floor(total / 86400),
+    h: Math.floor((total % 86400) / 3600),
+    m: Math.floor((total % 3600) / 60),
+    s: total % 60,
+  };
+}
+
+const pad = (n) => String(n).padStart(2, "0");
+
+function renderMeetings() {
+  const host = $("#meetings");
+  const list = [...meetings].sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+
+  if (!list.length) {
+    host.innerHTML = "";
+    return;
+  }
+
+  host.innerHTML =
+    `<div class="meet-head">⏰ Jadwal Rapat</div>` +
+    list
+      .map((m) => {
+        const rem = new Date(m.datetime).getTime() - Date.now();
+        const past = rem < 0;
+        const urgent = !past && rem <= DAY_MS;
+        return `
+        <article class="meet-card${past ? " past" : urgent ? " urgent" : ""}" data-rem="${esc(m.datetime)}">
+          <div class="m-title">${esc(m.title)}</div>
+          <div class="m-meta">
+            <span class="pill-time${urgent ? " hot" : ""}">📅 ${fmtDateTime(m.datetime)}</span>
+            <span>📍 ${esc(m.place || "—")}</span>
+          </div>
+          <div class="countdown">
+            <strong data-countdown>—</strong>
+            <span data-label>menuju rapat</span>
+          </div>
+        </article>`;
+      })
+      .join("");
+
+  tickCountdowns();
+}
+
+function tickCountdowns() {
+  document.querySelectorAll(".meet-card").forEach((card) => {
+    const target = new Date(card.dataset.rem).getTime();
+    const rem = target - Date.now();
+    const strong = card.querySelector("[data-countdown]");
+    const label = card.querySelector("[data-label]");
+    const pill = card.querySelector(".pill-time");
+    if (!strong) return;
+
+    if (Number.isNaN(target)) {
+      strong.textContent = "—";
+      label.textContent = "jadwal belum valid";
+      return;
+    }
+
+    if (rem < 0) {
+      card.classList.add("past");
+      card.classList.remove("urgent");
+      strong.textContent = "Selesai";
+      label.textContent = "waktu sudah lewat";
+      if (pill) pill.classList.remove("hot");
+      return;
+    }
+
+    card.classList.remove("past");
+    const p = splitRemaining(rem);
+    strong.textContent =
+      p.d > 0 ? `${p.d} hari ${pad(p.h)}:${pad(p.m)}:${pad(p.s)}` : `${pad(p.h)}:${pad(p.m)}:${pad(p.s)}`;
+    label.textContent = p.d > 0 ? "lagi menuju rapat" : "tinggal hari ini";
+
+    const urgent = rem <= DAY_MS;
+    card.classList.toggle("urgent", urgent);
+    if (pill) pill.classList.toggle("hot", urgent);
+  });
+
+  tickReminderCountdown();
+}
+
+/* ---------- popup reminder (muncul tiap dibuka kalau ≤ 1 hari lagi) ---------- */
+let reminderMeeting = null;
+
+function checkReminder() {
+  const now = Date.now();
+  const soon = meetings
+    .map((m) => ({ ...m, ms: new Date(m.datetime).getTime() - now }))
+    .filter((x) => !Number.isNaN(x.ms) && x.ms >= 0 && x.ms <= DAY_MS)
+    .sort((a, b) => a.ms - b.ms);
+
+  if (!soon.length) {
+    reminderMeeting = null;
+    return;
+  }
+
+  reminderMeeting = soon[0];
+  const m = reminderMeeting;
+  const p = splitRemaining(m.ms);
+  const hot = m.ms <= DAY_MS;
+
+  $("#reminder").innerHTML = `
+    <span class="r-badge">⏰ Pengingat Rapat</span>
+    <h3>${esc(m.title)}</h3>
+    <div class="r-count" id="r-count">
+      <div class="r-unit${hot ? " hot" : ""}"><b data-unit="d">${p.d}</b><i>hari</i></div>
+      <div class="r-unit${hot ? " hot" : ""}"><b data-unit="h">${pad(p.h)}</b><i>jam</i></div>
+      <div class="r-unit${hot ? " hot" : ""}"><b data-unit="m">${pad(p.m)}</b><i>menit</i></div>
+      <div class="r-unit${hot ? " hot" : ""}"><b data-unit="s">${pad(p.s)}</b><i>detik</i></div>
+    </div>
+    <p class="r-info">📅 ${fmtDateTime(m.datetime)} · 📍 ${esc(m.place || "—")}</p>
+    ${m.note ? `<div class="section"><h4>Catatan</h4><p>${esc(m.note)}</p></div>` : ""}
+    <button class="btn-primary" id="reminder-close">Siap, mengerti!</button>`;
+
+  $("#reminder-overlay").classList.remove("hidden");
+  $("#reminder-close").addEventListener("click", closeReminder);
+}
+
+function tickReminderCountdown() {
+  const host = $("#r-count");
+  if (!host || !reminderMeeting || $("#reminder-overlay").classList.contains("hidden")) return;
+
+  const rem = new Date(reminderMeeting.datetime).getTime() - Date.now();
+  if (rem < 0) {
+    closeReminder();
+    return;
+  }
+  const p = splitRemaining(rem);
+  const set = (unit, val) => {
+    const el = host.querySelector(`[data-unit="${unit}"]`);
+    if (el) el.textContent = unit === "d" ? val : pad(val);
+  };
+  set("d", p.d);
+  set("h", p.h);
+  set("m", p.m);
+  set("s", p.s);
+}
+
+function closeReminder() {
+  $("#reminder-overlay").classList.add("hidden");
+  reminderMeeting = null;
+}
+
 /* ---------- tabs ---------- */
 function initTabs() {
   document.querySelectorAll(".tab").forEach((btn) => {
@@ -267,21 +426,29 @@ function initTabs() {
     if (e.target === e.currentTarget) closeModal();
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal();
+    if (e.key === "Escape") {
+      closeModal();
+      closeReminder();
+    }
+  });
+  $("#reminder-overlay").addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) closeReminder();
   });
 }
 
 /* ---------- boot ---------- */
 async function boot() {
   try {
-    const [tRes, aRes] = await Promise.all([
+    const [tRes, aRes, mRes] = await Promise.all([
       fetch("data/tasks.json"),
       fetch("data/attendance.json"),
+      fetch("data/meetings.json"),
     ]);
     if (!tRes.ok) throw new Error("tasks.json tidak bisa dimuat");
     const tasksDoc = await tRes.json();
     tasks = tasksDoc.tasks || [];
     attendance = aRes.ok ? await aRes.json() : null;
+    meetings = mRes.ok ? ((await mRes.json()).meetings || []) : [];
 
     const eventName = tasksDoc.event || "Papan Kinerja Panitia";
     $("#event-name").textContent = eventName;
@@ -291,7 +458,10 @@ async function boot() {
     renderStats();
     renderBoard();
     renderAttendance();
+    renderMeetings();
     initTabs();
+    checkReminder();
+    setInterval(tickCountdowns, 1000);
     $("#loading").classList.add("hidden");
   } catch (err) {
     $("#loading").innerHTML = `

@@ -1,0 +1,25 @@
+{
+  "meetings": [
+    {
+      "id": "M-01",
+      "title": "Rapat Koordinasi Seluruh Divisi",
+      "datetime": "2026-11-24T19:00",
+      "place": "Aula Utama",
+      "note": "Bawa draft rundown masing-masing divisi."
+    },
+    {
+      "id": "M-02",
+      "title": "Evaluasi Publikasi Batch 2",
+      "datetime": "2026-11-28T20:00",
+      "place": "Ruang Kelas B2",
+      "note": "Review konten IG + reels BTS."
+    },
+    {
+      "id": "M-03",
+      "title": "Technical Meeting Hari-H",
+      "datetime": "2026-12-12T19:30",
+      "place": "Aula Utama",
+      "note": "Seluruh koordinator divisi wajib hadir."
+    }
+  ]
+}

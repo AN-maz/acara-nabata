@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Papan kinerja panitia — kanban tugas dan rekap kehadiran tim." />
-  <title>Papan Kinerja Panitia</title>
+  <meta name="description" content="Acara Nataba — papan kinerja panitia: kanban tugas, rekap kehadiran, dan pengingat jadwal rapat." />
+  <title>Acara Nataba · Papan Kinerja Panitia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -15,7 +15,7 @@
     <div class="brand">
       <span class="logo">◆</span>
       <div>
-        <h1 id="event-name">Papan Kinerja Panitia</h1>
+        <h1 id="event-name">Acara Nataba</h1>
         <p class="muted" id="event-period">Memuat…</p>
       </div>
     </div>
@@ -26,6 +26,8 @@
   </header>
 
   <section class="stats" id="stats" aria-label="Ringkasan"></section>
+
+  <section class="meetings" id="meetings" aria-label="Jadwal rapat berikutnya"></section>
 
   <main>
     <section id="view-board" class="view">
@@ -38,6 +40,10 @@
 
   <div class="modal-overlay hidden" id="modal-overlay" role="dialog" aria-modal="true">
     <div class="modal" id="modal"></div>
+  </div>
+
+  <div class="modal-overlay hidden" id="reminder-overlay" role="alertdialog" aria-modal="true">
+    <div class="modal reminder" id="reminder"></div>
   </div>
 
   <div id="character" aria-hidden="true"></div>

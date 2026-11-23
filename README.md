@@ -1,10 +1,10 @@
-# ◆ Papan Kinerja Panitia
+# ◆ Acara Nataba — Papan Kinerja Panitia
 
 **🔗 Live:** https://an-maz.github.io/kinerja-panitia/
 
 ![Preview papan kinerja](docs/preview.png)
 
-Dashboard statis buat memantau kinerja tim kepanitiaan: **kanban tugas** (To Do → In Progress → Done) + **rekap kehadiran** dengan perhitungan persentase. Data diinput lewat file JSON, jadi gak perlu backend — cukup push, langsung ke-deploy.
+Dashboard statis buat memantau kinerja tim kepanitiaan **Acara Nataba**: **kanban tugas** (To Do → In Progress → Done), **rekap kehadiran** dengan perhitungan persentase, dan **pengingat jadwal rapat** berupa hitung mundur live. Data diinput lewat file JSON, jadi gak perlu backend — cukup push, langsung ke-deploy.
 
 > Dibangun dengan vanilla HTML / CSS / JavaScript, tanpa framework dan tanpa build step.
 
@@ -13,6 +13,7 @@ Dashboard statis buat memantau kinerja tim kepanitiaan: **kanban tugas** (To Do 
 - **Kanban 3 kolom** — To Do, In Progress, Done; tiap kartu nunjukin divisi, PIC, deadline, prioritas, dan progres checklist mini.
 - **Detail tugas** — klik kartu, muncul modal: deskripsi, checklist, catatan, dan flag **Terlambat** kalau deadline lewat tapi belum selesai.
 - **Rekap kehadiran** — tabel per anggota: hadir / izin / sakit / alfa + bar persentase kehadiran, plus total dan rata-rata tim.
+- **Pengingat rapat + countdown live** — strip "Jadwal Rapat" di atas papan dengan hitung mundur per detik. Rapat yang tinggal **≤ 1 hari** menyala oranye (state urgent), dan **popup reminder muncul otomatis setiap halaman dibuka** sampai kamu tutup.
 - **Ringkasan atas** — total tugas, % selesai, yang sedang dikerjakan, jumlah anggota, kehadiran rata-rata.
 - **Karakter 3D idle** — robot kecil di pojok kanan bawah (three.js), kedip, goyang, dan nengok ngikutin kursor.
 
@@ -25,7 +26,8 @@ Dashboard statis buat memantau kinerja tim kepanitiaan: **kanban tugas** (To Do 
 ├── js/character.js     # karakter 3D idle (three.js via CDN)
 └── data/
     ├── tasks.json      # ← input tugas tim di sini
-    └── attendance.json # ← input kehadiran di sini
+    ├── attendance.json # ← input kehadiran di sini
+    └── meetings.json   # ← input jadwal rapat di sini
 ```
 
 ## 📝 Cara input data
@@ -76,6 +78,25 @@ Dashboard statis buat memantau kinerja tim kepanitiaan: **kanban tugas** (To Do 
 - Anggota yang gak mencatat di sebuah tanggal = **alfa**.
 - `% kehadiran = hadir / total sesi × 100`.
 - Rata-rata tim = rerata `% kehadiran` seluruh anggota.
+
+### Rapat (`data/meetings.json`)
+
+```json
+{
+  "meetings": [
+    {
+      "title": "Rapat Koordinasi Divisi",
+      "datetime": "2026-11-24T19:00",
+      "place": "Aula Utama",
+      "note": "Bawa draft rundown."
+    }
+  ]
+}
+```
+
+Hitung mundur jalan per detik. Ambang "≤ 1 hari" buat state urgent dan popup ada di `js/app.js` (`DAY_MS`) — kalau mau ganti jadi 3 hari, ubah konstantanya.
+
+**Data di folder `data/` saat ini masih contoh placeholder** — ganti dengan data kepanitiaan asli kamu.
 
 ## 🖥 Menjalankan lokal
 
