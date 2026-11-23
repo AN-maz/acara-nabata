@@ -3,29 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Papan kinerja panitia — kanban tugas dan rekap kehadiran tim." />
-  <title>Papan Kinerja Panitia</title>
+  <meta name="description" content="Acara Nataba — papan kinerja panitia: kanban tugas, rekap kehadiran, dan pengingat jadwal rapat." />
+  <title>Acara Nataba · Papan Kinerja Panitia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <header class="topbar">
     <div class="brand">
-      <span class="logo">◆</span>
+      <span class="logo"><img src="assets/kanji-nataba.png" alt="七夕" /></span>
       <div>
-        <h1 id="event-name">Papan Kinerja Panitia</h1>
+        <h1 id="event-name">Acara Nataba</h1>
         <p class="muted" id="event-period">Memuat…</p>
       </div>
     </div>
     <nav class="tabs" aria-label="Navigasi">
-      <button class="tab active" data-tab="board">📋 Papan Tugas</button>
-      <button class="tab" data-tab="attendance">🗓 Rekap Kehadiran</button>
+      <button class="tab active" data-tab="board">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 7v7"/><path d="M12 7v4"/><path d="M16 7v9"/></svg>
+        Papan Tugas
+      </button>
+      <button class="tab" data-tab="attendance">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+        Rekap Kehadiran
+      </button>
     </nav>
   </header>
 
   <section class="stats" id="stats" aria-label="Ringkasan"></section>
+
+  <section class="meetings" id="meetings" aria-label="Jadwal rapat berikutnya"></section>
 
   <main>
     <section id="view-board" class="view">
@@ -38,6 +46,10 @@
 
   <div class="modal-overlay hidden" id="modal-overlay" role="dialog" aria-modal="true">
     <div class="modal" id="modal"></div>
+  </div>
+
+  <div class="modal-overlay hidden" id="reminder-overlay" role="alertdialog" aria-modal="true">
+    <div class="modal reminder" id="reminder"></div>
   </div>
 
   <div id="character" aria-hidden="true"></div>
