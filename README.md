@@ -1,5 +1,9 @@
 # ◆ Papan Kinerja Panitia
 
+**🔗 Live:** https://an-maz.github.io/kinerja-panitia/
+
+![Preview papan kinerja](docs/preview.png)
+
 Dashboard statis buat memantau kinerja tim kepanitiaan: **kanban tugas** (To Do → In Progress → Done) + **rekap kehadiran** dengan perhitungan persentase. Data diinput lewat file JSON, jadi gak perlu backend — cukup push, langsung ke-deploy.
 
 > Dibangun dengan vanilla HTML / CSS / JavaScript, tanpa framework dan tanpa build step.
