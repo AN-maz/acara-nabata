@@ -1,0 +1,119 @@
+{
+  "scene": { "width": 760, "height": 470 },
+  "people": [
+    {
+      "slug": "andrian",
+      "name": "Andrian",
+      "role": "Koordinator",
+      "division": "Koordinator",
+      "koor": true,
+      "left": 40.5,
+      "bottom": -1,
+      "w": 17.9,
+      "sw": 136,
+      "sh": 88,
+      "jobdesk": [
+        "Menyusun rundown, timeline, dan deadline besar acara",
+        "Membagi tugas ke tiap divisi dan review progres tiap minggu",
+        "PIC koordinasi dengan pihak kampus & pengisi acara",
+        "Finalisasi laporan kepanitiaan sebelum periode berakhir"
+      ]
+    },
+    {
+      "slug": "bagas",
+      "name": "Bagas",
+      "role": "Ketua Divisi Acara",
+      "division": "Acara",
+      "left": 7.5,
+      "bottom": 11,
+      "w": 12.6,
+      "sw": 96,
+      "sh": 72,
+      "jobdesk": [
+        "Rundown detail + blocking program hari-H",
+        "Koordinasi pengisi acara dan technical meeting",
+        "Cek kesiapan panggung & kelengkapan acara"
+      ]
+    },
+    {
+      "slug": "rara",
+      "name": "Rara",
+      "role": "Ketua Divisi Konsumsi",
+      "division": "Konsumsi",
+      "left": 25.5,
+      "bottom": 11,
+      "w": 12.6,
+      "sw": 96,
+      "sh": 72,
+      "jobdesk": [
+        "Estimasi anggaran konsumsi rapat + hari-H",
+        "Pendataan & negosiasi vendor konsumsi",
+        "Distribusi konsumsi untuk panitia & tamu"
+      ]
+    },
+    {
+      "slug": "yoga",
+      "name": "Yoga",
+      "role": "Ketua Divisi Keamanan",
+      "division": "Keamanan",
+      "left": 65.5,
+      "bottom": 11,
+      "w": 12.6,
+      "sw": 96,
+      "sh": 72,
+      "jobdesk": [
+        "Skema pengaturan pintu & alur tamu",
+        "Rekapitulasi izin pemakaian gedung",
+        "Koordinasi keamanan bareng satpam kampus"
+      ]
+    },
+    {
+      "slug": "nadia",
+      "name": "Nadia",
+      "role": "Ketua Divisi Publikasi",
+      "division": "Publikasi",
+      "left": 14,
+      "bottom": 30,
+      "w": 12.6,
+      "sw": 96,
+      "sh": 72,
+      "jobdesk": [
+        "Konten IG feed + caption tiap minggu",
+        "Jadwal posting & audit tampilan feed",
+        "Review desain konten sebelum publish"
+      ]
+    },
+    {
+      "slug": "salsa",
+      "name": "Salsa",
+      "role": "Ketua Divisi Dokumentasi",
+      "division": "Dokumentasi",
+      "left": 44,
+      "bottom": 30,
+      "w": 12.6,
+      "sw": 96,
+      "sh": 72,
+      "jobdesk": [
+        "Foto & video technical meeting dan hari-H",
+        "Arsip dokumen, surat izin, dan bukti kegiatan",
+        "Edit after-event report buat laporan akhir"
+      ]
+    },
+    {
+      "slug": "dimas",
+      "name": "Dimas",
+      "role": "Anggota Publikasi",
+      "division": "Publikasi",
+      "left": 71,
+      "bottom": 30,
+      "w": 12.6,
+      "sw": 96,
+      "sh": 72,
+      "jobdesk": [
+        "Desain konten batch 2 (feed & story)",
+        "Reels behind-the-scene technical meeting",
+        "Monitoring insight konten tiap minggu"
+      ]
+    }
+  ]
+}

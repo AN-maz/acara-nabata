@@ -17,6 +17,9 @@ Dashboard statis buat memantau kinerja tim kepanitiaan **Acara Nataba**: **kanba
 - **Ringkasan atas** — total tugas, % selesai, yang sedang dikerjakan, tugas terlambat, jumlah anggota, kehadiran rata-rata.
 - **Ikon SVG ala Lucide** — semua emoji di UI diganti icon stroke SVG (konsisten kayak icon di React), termasuk tombol close dan centang checklist.
 - **Dekorasi crop dari poster acara** — glyph **七夕** di logo lingkaran merah dan bintang di header "Jadwal Rapat" di-crop langsung dari desain poster (file di `assets/`, background sudah transparan).
+- **Scene pixel art "Ruang Kerja"** — ilustrasi kantor retro di halaman awal: 7 panitia duduk di meja masing-masing (animasi ketik dua frame pakai CSS `steps()`), pill nama + divisi di atas kepala, meja koordinator beda setup (2 monitor + headset). **Klik karakter → popup jobdesk** (role, divisi, poin jobdesk, progres tugas). Spritenya digenerate script Python di `tools/make-pixel-assets.py`.
+- **Latar ala poster acara** — dinding ungu gelap + glow magenta, awan gelap di tepi, splash oranye + lingkaran merah berisi **七夕**, dan tulisan pixel **TANABATA TO ALGORITHM** (font 5x7 digambar sendiri), plus starburst/petir, jejak sirkuit PCB, jendela malam, dan bunting festival.
+- **Animasi lapor ke koordinator** — salah satu anggota secara bergantian ninggalin kursinya (meja jadi kosong), jalan **lewat jalur yang logis**: turun ke celah bebas antar meja, lanjut di koridor depan sejajar garis lantai (murni sumbu X/Y, gak diagonal, gak nabrak meja), lalu **berhenti di samping meja koordinator — sebelum nyampe mejanya** — muncul bubble **"Lapor!"**, terus balik ke meja dan duduk lagi. Durasi jalan nyesuaiin jarak, sprite jalan 2 frame selang-seling, ada bayangan tipis di bawah kaki biar gak ngambang, dan animasi mati otomatis kalau user nyala `prefers-reduced-motion`.
 - **Karakter 3D idle** — robot kecil di pojok kanan bawah (three.js), kedip, goyang, dan nengok ngikutin kursor.
 
 ## 📁 Struktur
@@ -24,15 +27,20 @@ Dashboard statis buat memantau kinerja tim kepanitiaan **Acara Nataba**: **kanba
 ```
 ├── index.html          # entry point
 ├── css/style.css       # tema pop-art festival (minimalis)
-├── js/app.js           # render kanban, modal, rekap kehadiran, countdown
+├── js/app.js           # render kanban, modal, rekap kehadiran, countdown, scene Ruang Kerja
 ├── js/character.js     # karakter 3D idle (three.js via CDN)
 ├── assets/             # elemen crop dari poster (transparan)
 │   ├── kanji-nataba.png
-│   └── decor-star.png
+│   ├── decor-star.png
+│   └── pixel/          # room.png (latar ala poster) + ws-<slug>-a/b (duduk)
+│                       # ws-<slug>-desk-a/b (meja kosong) + walk-<slug>-a/b (jalan lapor)
+├── tools/
+│   └── make-pixel-assets.py  # generator sprite pixel art
 └── data/
     ├── tasks.json      # ← input tugas tim di sini
     ├── attendance.json # ← input kehadiran di sini
-    └── meetings.json   # ← input jadwal rapat di sini
+    ├── team.json       # ← data anggota: nama, role, divisi, posisi meja, jobdesk
+    └── meetings.json   # ← jadwal rapat di sini
 ```
 
 ## 📝 Cara input data
