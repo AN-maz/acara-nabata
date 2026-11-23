@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Papan kinerja panitia — kanban tugas dan rekap kehadiran tim." />
+  <title>Papan Kinerja Panitia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">◆</span>
+      <div>
+        <h1 id="event-name">Papan Kinerja Panitia</h1>
+        <p class="muted" id="event-period">Memuat…</p>
+      </div>
+    </div>
+    <nav class="tabs" aria-label="Navigasi">
+      <button class="tab active" data-tab="board">📋 Papan Tugas</button>
+      <button class="tab" data-tab="attendance">🗓 Rekap Kehadiran</button>
+    </nav>
+  </header>
+
+  <section class="stats" id="stats" aria-label="Ringkasan"></section>
+
+  <main>
+    <section id="view-board" class="view">
+      <div class="board" id="board"></div>
+    </section>
+    <section id="view-attendance" class="view hidden">
+      <div class="panel" id="attendance"></div>
+    </section>
+  </main>
+
+  <div class="modal-overlay hidden" id="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal" id="modal"></div>
+  </div>
+
+  <div id="character" aria-hidden="true"></div>
+
+  <div class="loading" id="loading">Memuat data…</div>
+
+  <script type="importmap">
+    { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+  </script>
+  <script src="js/app.js" defer></script>
+  <script type="module" src="js/character.js"></script>
+</body>
+</html>

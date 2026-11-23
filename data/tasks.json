@@ -1,0 +1,164 @@
+{
+  "event": "Expo Kampus 2027",
+  "period": "Periode kepanitiaan: Nov 2026 – Feb 2027",
+  "tasks": [
+    {
+      "id": "T-01",
+      "title": "Finalisasi konsep acara",
+      "division": "Acara",
+      "pic": "Bagas",
+      "status": "done",
+      "priority": "high",
+      "deadline": "2026-11-14",
+      "description": "Menyusun rundown besar acara beserta tema dan alur segmen dari pembuka sampai penutup.",
+      "notes": "Konsep disetujui pimpinan 14 Nov, tinggal dijabarkan ke rundown detail.",
+      "checklist": [
+        { "item": "Draft tema & konsep", "done": true },
+        { "item": "Review panitia inti", "done": true },
+        { "item": "Persetujuan pimpinan", "done": true }
+      ]
+    },
+    {
+      "id": "T-02",
+      "title": "Rundown detail + blocking program",
+      "division": "Acara",
+      "pic": "Bagas",
+      "status": "in_progress",
+      "priority": "high",
+      "deadline": "2026-11-26",
+      "description": "Memecah rundown besar jadi per-menit: siapa MC, kapan performer masuk, durasi tiap segmen.",
+      "notes": "Blocking performer belum dapat konfirmasi dari dua UKM.",
+      "checklist": [
+        { "item": "Rundown per-menit", "done": true },
+        { "item": "Blocking performer", "done": false },
+        { "item": "Koordinasi dengan MC", "done": false }
+      ]
+    },
+    {
+      "id": "T-03",
+      "title": "Desain poster & konten IG (batch 1)",
+      "division": "Publikasi",
+      "pic": "Nadia",
+      "status": "done",
+      "priority": "medium",
+      "deadline": "2026-11-16",
+      "description": "Teaser poster pengumuman acara + 3 konten feed Instagram untuk minggu pertama.",
+      "notes": "Impresi teaser 2.1k, lebih tinggi dari target.",
+      "checklist": [
+        { "item": "Poster teaser", "done": true },
+        { "item": "Caption + hashtag", "done": true },
+        { "item": "Jadwal posting", "done": true }
+      ]
+    },
+    {
+      "id": "T-04",
+      "title": "Konten IG (batch 2) + reels Behind The Scene",
+      "division": "Publikasi",
+      "pic": "Nadia",
+      "status": "in_progress",
+      "priority": "medium",
+      "deadline": "2026-11-28",
+      "description": "Konten feed minggu kedua dan satu reels BTS persiapan panitia.",
+      "notes": "Footage BTS dikumpulkan divisi dokumentasi, edit menyusul.",
+      "checklist": [
+        { "item": "Storyboard reels", "done": true },
+        { "item": "Edit reels", "done": false },
+        { "item": "Caption batch 2", "done": false }
+      ]
+    },
+    {
+      "id": "T-05",
+      "title": "Pendataan vendor konsumsi",
+      "division": "Konsumsi",
+      "pic": "Rara",
+      "status": "in_progress",
+      "priority": "high",
+      "deadline": "2026-11-24",
+      "description": "Mengumpulkan 5 penawaran katering, membandingkan menu, harga per porsi, dan kapasitas.",
+      "notes": "Sudah dapat 3 penawaran, 2 vendor lagi di-follow up.",
+      "checklist": [
+        { "item": "Daftar vendor", "done": true },
+        { "item": "Minta penawaran harga", "done": true },
+        { "item": "Bandingkan & pilih", "done": false }
+      ]
+    },
+    {
+      "id": "T-06",
+      "title": "Estimasi anggaran konsumsi panitia",
+      "division": "Konsumsi",
+      "pic": "Rara",
+      "status": "todo",
+      "priority": "medium",
+      "deadline": "2026-11-30",
+      "description": "Hitung kebutuhan konsumsi rapat + hari-H berdasarkan jumlah rapat per minggu.",
+      "notes": "",
+      "checklist": [
+        { "item": "Data jumlah rapat/minggu", "done": false },
+        { "item": "Hitung estimasi rupiah", "done": false }
+      ]
+    },
+    {
+      "id": "T-07",
+      "title": "Surat izin pemakaian gedung",
+      "division": "Keamanan",
+      "pic": "Yoga",
+      "status": "done",
+      "priority": "high",
+      "deadline": "2026-11-12",
+      "description": "Pengajuan surat izin pemakaian gedung utama ke bagian sarana.",
+      "notes": "Surat terbit 12 Nov, arsip di folder dokumen.",
+      "checklist": [
+        { "item": "Draft surat", "done": true },
+        { "item": "Tanda tangan pembina", "done": true },
+        { "item": "Arsip surat", "done": true }
+      ]
+    },
+    {
+      "id": "T-08",
+      "title": "Skema pengaturan pintu & rekapitulasi",
+      "division": "Keamanan",
+      "pic": "Yoga",
+      "status": "todo",
+      "priority": "medium",
+      "deadline": "2026-12-05",
+      "description": "Menentukan posisi jaga pintu masuk/keluar, jalur evakuasi, dan pembagian shift saat hari-H.",
+      "notes": "",
+      "checklist": [
+        { "item": "Denah lokasi", "done": false },
+        { "item": "Pembagian shift personel", "done": false },
+        { "item": "Briefing ke seluruh divisi", "done": false }
+      ]
+    },
+    {
+      "id": "T-09",
+      "title": "Checklist alat & inventory dokumentasi",
+      "division": "Dokumentasi",
+      "pic": "Salsa",
+      "status": "in_progress",
+      "priority": "low",
+      "deadline": "2026-12-01",
+      "description": "Inventaris kamera, tripod, lighting, dan mic wireless; catat mana yang perlu disewa.",
+      "notes": "Mic wireless cuma punya 2 unit, perlu sewa 2 lagi.",
+      "checklist": [
+        { "item": "Inventaris alat milik sendiri", "done": true },
+        { "item": "Daftar yang perlu disewa", "done": false },
+        { "item": "Ceklist hari-H", "done": false }
+      ]
+    },
+    {
+      "id": "T-10",
+      "title": "Dokumenterasi technical meeting",
+      "division": "Dokumentasi",
+      "pic": "Salsa",
+      "status": "todo",
+      "priority": "low",
+      "deadline": "2026-12-10",
+      "description": "Foto + video singkat technical meeting, lalu dipotong jadi konten publikasi.",
+      "notes": "",
+      "checklist": [
+        { "item": "Siapkan alat", "done": false },
+        { "item": "Upload ke drive divisi", "done": false }
+      ]
+    }
+  ]
+}
