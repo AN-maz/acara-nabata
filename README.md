@@ -4,7 +4,7 @@
 
 ![Preview papan kinerja](docs/preview.png)
 
-Dashboard statis buat memantau kinerja tim kepanitiaan **Acara Nataba**: **kanban tugas** (To Do → In Progress → Done), **rekap kehadiran** dengan perhitungan persentase, dan **pengingat jadwal rapat** berupa hitung mundur live. Data diinput lewat file JSON, jadi gak perlu backend — cukup push, langsung ke-deploy.
+Dashboard statis buat memantau kinerja tim kepanitiaan **Acara Nataba**: **kanban tugas** (To Do → In Progress → Done), **rekap kehadiran** dengan perhitungan persentase, **tabel rundown hari-H** (24 segmen, dibaca dari `data/rundown.json`), dan **pengingat jadwal rapat** berupa hitung mundur live. Data diinput lewat file JSON, jadi gak perlu backend — cukup push, langsung ke-deploy.
 
 > Dibangun dengan vanilla HTML / CSS / JavaScript, tanpa framework dan tanpa build step.
 
@@ -17,7 +17,7 @@ Dashboard statis buat memantau kinerja tim kepanitiaan **Acara Nataba**: **kanba
 - **Ringkasan atas** — total tugas, % selesai, yang sedang dikerjakan, tugas terlambat, jumlah anggota, kehadiran rata-rata.
 - **Ikon SVG ala Lucide** — semua emoji di UI diganti icon stroke SVG (konsisten kayak icon di React), termasuk tombol close dan centang checklist.
 - **Dekorasi crop dari poster acara** — glyph **七夕** di logo lingkaran merah dan bintang di header "Jadwal Rapat" di-crop langsung dari desain poster (file di `assets/`, background sudah transparan).
-- **Scene pixel art "Ruang Kerja"** — ilustrasi kantor retro di halaman awal: 7 panitia duduk di meja masing-masing (animasi ketik dua frame pakai CSS `steps()`), pill nama + divisi di atas kepala, meja koordinator beda setup (2 monitor + headset). **Klik karakter → popup jobdesk** (role, divisi, poin jobdesk, progres tugas). Spritenya digenerate script Python di `tools/make-pixel-assets.py`.
+- **Scene pixel art "Ruang Kerja"** — ilustrasi kantor retro di halaman awal: 11 workstation (koordinator + 10 anggota Divisi Acara) duduk di meja masing-masing (animasi ketik dua frame pakai CSS `steps()`), pill nama + peran di atas kepala, meja koordinator beda setup (2 monitor + headset). **Klik karakter → popup jobdesk** (role, divisi, poin jobdesk, progres tugas). Spritenya digenerate script Python di `tools/make-pixel-assets.py` — figurin perempuan punya rambut panjang (flag `gender` di `team.json`).
 - **Latar ala poster acara** — dinding ungu gelap + glow magenta, awan gelap di tepi, splash oranye + lingkaran merah berisi **七夕**, dan tulisan pixel **TANABATA TO ALGORITHM** (font 5x7 digambar sendiri), plus starburst/petir, jejak sirkuit PCB, jendela malam, dan bunting festival.
 - **Animasi lapor ke koordinator** — salah satu anggota secara bergantian ninggalin kursinya (meja jadi kosong), jalan **lewat jalur yang logis**: turun ke celah bebas antar meja, lanjut di koridor depan sejajar garis lantai (murni sumbu X/Y, gak diagonal, gak nabrak meja), lalu **berhenti di samping meja koordinator — sebelum nyampe mejanya** — muncul bubble **"Lapor!"**, terus balik ke meja dan duduk lagi. Durasi jalan nyesuaiin jarak, sprite jalan 2 frame selang-seling, ada bayangan tipis di bawah kaki biar gak ngambang, dan animasi mati otomatis kalau user nyala `prefers-reduced-motion`.
 - **Karakter 3D idle** — robot kecil di pojok kanan bawah (three.js), kedip, goyang, dan nengok ngikutin kursor.
@@ -39,7 +39,8 @@ Dashboard statis buat memantau kinerja tim kepanitiaan **Acara Nataba**: **kanba
 └── data/
     ├── tasks.json      # ← input tugas tim di sini
     ├── attendance.json # ← input kehadiran di sini
-    ├── team.json       # ← data anggota: nama, role, divisi, posisi meja, jobdesk
+    ├── team.json       # ← data anggota: nama, role, divisi, posisi meja, jobdesk, gender
+    ├── rundown.json    # ← rundown hari-H (24 segmen) — sumber tab Rundown
     └── meetings.json   # ← jadwal rapat di sini
 ```
 
@@ -109,7 +110,7 @@ Dashboard statis buat memantau kinerja tim kepanitiaan **Acara Nataba**: **kanba
 
 Hitung mundur jalan per detik. Ambang "≤ 1 hari" buat state urgent dan popup ada di `js/app.js` (`DAY_MS`) — kalau mau ganti jadi 3 hari, ubah konstantanya.
 
-**Data di folder `data/` saat ini masih contoh placeholder** — ganti dengan data kepanitiaan asli kamu.
+**Roster di `data/team.json` udah data asli Divisi Acara (11 orang), rundown di `data/rundown.json` juga** — `attendance.json` sengaja dikosongin, tinggal diisi catatan kehadiran asli.
 
 ## 🖥 Menjalankan lokal
 

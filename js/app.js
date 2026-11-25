@@ -13,6 +13,7 @@ let tasks = [];
 let team = [];
 let attendance = null;
 let meetings = [];
+let rundownItems = [];
 
 const DAY_MS = 86400000; // 24 jam — ambang "tinggal 1 hari" buat popup
 
@@ -92,7 +93,7 @@ function renderStats() {
     { label: "Selesai", value: `${pct}<small>%</small>`, bar: pct },
     { label: "Sedang Dikerjakan", value: doing, bar: null },
     { label: "Tugas Terlambat", value: overdue, bar: null, warn: overdue > 0 },
-    { label: "Anggota Tim", value: attendance ? attendance.members.length : 0, bar: null },
+    { label: "Anggota Tim", value: team.length || attendance?.members?.length || 0, bar: null },
     { label: "Kehadiran Rata-rata", value: `${att.avg}<small>%</small>`, bar: att.avg },
   ];
 
@@ -288,6 +289,49 @@ function renderAttendance() {
     </table>`;
 }
 
+/* ---------- rundown hari-H ---------- */
+function renderRundown() {
+  const host = $("#rundown");
+  if (!host) return;
+
+  if (!rundownItems.length) {
+    host.innerHTML = `<p class="sub">Belum ada rundown di <code>data/rundown.json</code>.</p>`;
+    return;
+  }
+
+  const jam = rundownItems.map((i) => i.waktu || "").filter(Boolean);
+  const awal = (jam[0] || "").split(" - ")[0] || "";
+  const akhir = (jam[jam.length - 1] || "").split(" - ").pop() || "";
+
+  host.innerHTML = `
+    <h2>Rundown — ${esc(attendance?.event || "Tanabata To Algorithm")}</h2>
+    <p class="sub">${rundownItems.length} segmen · ${esc(awal)} – ${esc(akhir)} · PIC kosong berarti Koor Acara yang pegang</p>
+    <table>
+      <thead>
+        <tr>
+          <th>No</th><th>Waktu</th><th>Durasi</th><th>Kegiatan</th>
+          <th>Keterangan</th><th>PIC</th><th>Tempat</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rundownItems
+          .map(
+            (i) => `
+          <tr>
+            <td>${i.no}</td>
+            <td class="muted">${esc(i.waktu || "—")}</td>
+            <td>${i.durasi ? `${i.durasi}′` : "—"}</td>
+            <td>${esc(i.kegiatan || "—")}</td>
+            <td class="muted">${esc(i.keterangan || "—")}</td>
+            <td>${esc(i.pic || "—")}</td>
+            <td class="muted">${esc(i.tempat || "—")}</td>
+          </tr>`
+          )
+          .join("")}
+      </tbody>
+    </table>`;
+}
+
 /* ---------- jadwal rapat + countdown ---------- */
 function fmtDateTime(iso) {
   const d = new Date(iso);
@@ -446,13 +490,13 @@ function closeReminder() {
 
 /* ---------- tabs ---------- */
 function initTabs() {
-  document.querySelectorAll(".tab").forEach((btn) => {
+  const tabs = document.querySelectorAll(".tab");
+  tabs.forEach((btn) => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      const isBoard = btn.dataset.tab === "board";
-      $("#view-board").classList.toggle("hidden", !isBoard);
-      $("#view-attendance").classList.toggle("hidden", isBoard);
+      tabs.forEach((b) => b.classList.toggle("active", b === btn));
+      document
+        .querySelectorAll(".view")
+        .forEach((v) => v.classList.toggle("hidden", v.id !== `view-${btn.dataset.tab}`));
     });
   });
 
@@ -492,7 +536,7 @@ function renderOffice() {
       <button class="ws${p.koor ? " koor" : ""}" data-name="${esc(p.name)}" data-slug="${esc(p.slug)}"
               style="left:${p.left}%;bottom:${p.bottom}%;width:${p.w}%;aspect-ratio:${p.sw} / ${p.sh};z-index:${p.koor ? 4 : p.bottom <= 15 ? 5 : 3}"
               aria-label="Jobdesk ${esc(p.name)}">
-        <span class="ws-pill"><i style="background:${dot}"></i><span class="txt"><b>${esc(p.name)}</b><em>${esc(p.koor ? p.role : p.division)}</em></span></span>
+        <span class="ws-pill"><i style="background:${dot}"></i><span class="txt"><b>${esc(p.name)}</b><em>${esc(p.role || p.division)}</em></span></span>
         <img class="frame f-a" src="assets/pixel/ws-${p.slug}-a.png" alt="" />
         <img class="frame f-b" src="assets/pixel/ws-${p.slug}-b.png" alt="" />
       </button>` +
@@ -700,11 +744,12 @@ function openJobdesk(p) {
 
 async function boot() {
   try {
-    const [tRes, aRes, mRes, rRes] = await Promise.all([
+    const [tRes, aRes, mRes, rRes, runRes] = await Promise.all([
       fetch("data/tasks.json"),
       fetch("data/attendance.json"),
       fetch("data/meetings.json"),
       fetch("data/team.json"),
+      fetch("data/rundown.json"),
     ]);
     if (!tRes.ok) throw new Error("tasks.json tidak bisa dimuat");
     const tasksDoc = await tRes.json();
@@ -712,6 +757,7 @@ async function boot() {
     attendance = aRes.ok ? await aRes.json() : null;
     meetings = mRes.ok ? ((await mRes.json()).meetings || []) : [];
     team = rRes.ok ? ((await rRes.json()).people || []) : [];
+    rundownItems = runRes.ok ? ((await runRes.json()).items || []) : [];
 
     const eventName = tasksDoc.event || "Papan Kinerja Panitia";
     $("#event-name").textContent = eventName;
@@ -721,6 +767,7 @@ async function boot() {
     renderStats();
     renderBoard();
     renderAttendance();
+    renderRundown();
     renderMeetings();
     renderOffice();
     initTabs();

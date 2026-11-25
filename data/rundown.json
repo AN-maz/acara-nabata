@@ -1,0 +1,222 @@
+{
+  "event": "Tanabata To Algorithm",
+  "date": "hari-H",
+  "items": [
+    {
+      "no": 1,
+      "waktu": "07:00 - 08:30",
+      "durasi": 90,
+      "kegiatan": "Kumpul Panitia",
+      "keterangan": "Persiapan & Check-in Panitia",
+      "pic": "Seluruh Panitia",
+      "tempat": "Aula gedung B"
+    },
+    {
+      "no": 2,
+      "waktu": "08:30 - 09:00",
+      "durasi": 30,
+      "kegiatan": "Briefing Panitia",
+      "keterangan": "Coordination & Final Check Room",
+      "pic": "Ketuplak / Waketuplak",
+      "tempat": ""
+    },
+    {
+      "no": 3,
+      "waktu": "09:00 - 09:30",
+      "durasi": 30,
+      "kegiatan": "Registrasi Peserta",
+      "keterangan": "Peserta memilih track Workshop",
+      "pic": "Humas",
+      "tempat": ""
+    },
+    {
+      "no": 4,
+      "waktu": "09:30 - 09:35",
+      "durasi": 5,
+      "kegiatan": "Pembukaan Acara",
+      "keterangan": "Welcoming oleh MC Utama",
+      "pic": "MC",
+      "tempat": ""
+    },
+    {
+      "no": 5,
+      "waktu": "09:35 - 09:40",
+      "durasi": null,
+      "kegiatan": "Nyanyi Nasional & MARS UTB",
+      "keterangan": "Menyanyikan lagu bersama",
+      "pic": "Koorlap",
+      "tempat": ""
+    },
+    {
+      "no": 6,
+      "waktu": "09:40 - 09:45",
+      "durasi": null,
+      "kegiatan": "Sambutan Ketuplak",
+      "keterangan": "",
+      "pic": "Kang Ahmad",
+      "tempat": ""
+    },
+    {
+      "no": 7,
+      "waktu": "09:45 - 09:50",
+      "durasi": null,
+      "kegiatan": "Sambutan Ketum Oxigen",
+      "keterangan": "",
+      "pic": "Kang Sulastian",
+      "tempat": ""
+    },
+    {
+      "no": 8,
+      "waktu": "09:50 - 09:55",
+      "durasi": null,
+      "kegiatan": "Sambutan Ketum SNN",
+      "keterangan": "",
+      "pic": "Kang Asad",
+      "tempat": ""
+    },
+    {
+      "no": 9,
+      "waktu": "09:55 - 10:00",
+      "durasi": null,
+      "kegiatan": "Sambutan SBDO",
+      "keterangan": "",
+      "pic": "SBDO",
+      "tempat": ""
+    },
+    {
+      "no": 10,
+      "waktu": "10:00 - 10:05",
+      "durasi": null,
+      "kegiatan": "Sambutan Pembina Oxigen",
+      "keterangan": "",
+      "pic": "Pembina Oxigen",
+      "tempat": ""
+    },
+    {
+      "no": 11,
+      "waktu": "10:05 - 10:10",
+      "durasi": null,
+      "kegiatan": "Sambutan Pembina SNN",
+      "keterangan": "",
+      "pic": "Pembina SNN",
+      "tempat": ""
+    },
+    {
+      "no": 12,
+      "waktu": "10:10 - 10:15",
+      "durasi": null,
+      "kegiatan": "Sambutan Kemahasiswaan",
+      "keterangan": "",
+      "pic": "Kemahasiswaan",
+      "tempat": ""
+    },
+    {
+      "no": 13,
+      "waktu": "10:15 - 10:25",
+      "durasi": 10,
+      "kegiatan": "Pengarahan ke sesi seminar",
+      "keterangan": "Menjelaskan singkat latar belakang diadakan event ini - antara teknologi dan budaya dan menjelaskan kenapa memilih VR MC",
+      "pic": "MC",
+      "tempat": ""
+    },
+    {
+      "no": 14,
+      "waktu": "10:25 - 12:15",
+      "durasi": 110,
+      "kegiatan": "Seminar VR",
+      "keterangan": "Pemateri",
+      "pic": "",
+      "tempat": ""
+    },
+    {
+      "no": 15,
+      "waktu": "12:15 - 12:25",
+      "durasi": 10,
+      "kegiatan": "Tanya Jawab",
+      "keterangan": "Sesi tanya jawab peserta dengan pemateri",
+      "pic": "MC & Pemateri",
+      "tempat": ""
+    },
+    {
+      "no": 16,
+      "waktu": "12:25 - 12:30",
+      "durasi": 5,
+      "kegiatan": "Penyerahan Sertifikat & Foto",
+      "keterangan": "Apresiasi untuk Pemateri Seminar",
+      "pic": "MC & PDD",
+      "tempat": ""
+    },
+    {
+      "no": 17,
+      "waktu": "12:30 - 12:40",
+      "durasi": 10,
+      "kegiatan": "Ice Breaking",
+      "keterangan": "Persiapan ISOMA, penjelasan expo",
+      "pic": "MC",
+      "tempat": ""
+    },
+    {
+      "no": 18,
+      "waktu": "12:40 - 12:55",
+      "durasi": 15,
+      "kegiatan": "Showcase Project / Intro Expo",
+      "keterangan": "Memperkenalkan secara singkat project-project yang ada di expo dan Briefing singkat menuju Pameran ke peserta",
+      "pic": "MC & Operator",
+      "tempat": ""
+    },
+    {
+      "no": 19,
+      "waktu": "12:55 - 13:30",
+      "durasi": 35,
+      "kegiatan": "ISOMA",
+      "keterangan": "Istirahat, Sholat, Makan",
+      "pic": "Konsumsi",
+      "tempat": "Kampus"
+    },
+    {
+      "no": 20,
+      "waktu": "13:30 - 15:30",
+      "durasi": 120,
+      "kegiatan": "OPEN EXPO / PAMERAN",
+      "keterangan": "Segmen 2 (Pameran Karya/Stand)",
+      "pic": "Acara",
+      "tempat": "Aula Gedung B"
+    },
+    {
+      "no": 21,
+      "waktu": "15:30 - 16:40",
+      "durasi": 70,
+      "kegiatan": "Acara Internal & Penghargaan",
+      "keterangan": "Pengumuman & Awarding",
+      "pic": "MC",
+      "tempat": ""
+    },
+    {
+      "no": 22,
+      "waktu": "16:40 - 16:45",
+      "durasi": 5,
+      "kegiatan": "Foto Bersama",
+      "keterangan": "Foto Seluruh Peserta & Panitia",
+      "pic": "PDD",
+      "tempat": ""
+    },
+    {
+      "no": 23,
+      "waktu": "16:45 - 17:55",
+      "durasi": 70,
+      "kegiatan": "Rapih-rapih",
+      "keterangan": "Clean Up & Packing Perlengkapan",
+      "pic": "Semua Panitia",
+      "tempat": "Kampus"
+    },
+    {
+      "no": 24,
+      "waktu": "17:55 - 18:45",
+      "durasi": 50,
+      "kegiatan": "Evaluasi Panitia",
+      "keterangan": "Debriefing Panitia",
+      "pic": "TopMan Kepanitiaan",
+      "tempat": ""
+    }
+  ]
+}

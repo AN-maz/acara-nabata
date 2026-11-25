@@ -96,9 +96,10 @@ def draw_text(d, text, x, y, scale, fill, shadow=None):
         cx += 6 * scale
 
 
-def workstation(shirt, koor=False, prop="mug", empty=False):
+def workstation(shirt, koor=False, prop="mug", empty=False, gender="m"):
     """Return [frame_a, frame_b] (RGBA). prop: mug | plant | none
-    empty=True → meja doang (orangnya lagi pergi ngelapor), khusus non-koor."""
+    empty=True → meja doang (orangnya lagi pergi ngelapor), khusus non-koor.
+    gender="f" → rambut panjang (poni turun di sisi kepala)."""
     if koor:
         W, H = 136, 88
     else:
@@ -180,6 +181,9 @@ def workstation(shirt, koor=False, prop="mug", empty=False):
                 d.rectangle([37, 6 + dy, 58, 14 + dy], fill=HAIR)
                 d.rectangle([39, 14 + dy, 56, 27 + dy], fill=SKIN)
                 d.rectangle([52, 14 + dy, 56, 27 + dy], fill=SKIN_D)
+                if gender == "f":  # rambut panjang — poni nutupin sisi kepala
+                    d.rectangle([37, 14 + dy, 41, 30 + dy], fill=HAIR)
+                    d.rectangle([54, 14 + dy, 58, 30 + dy], fill=HAIR)
                 d.rectangle([43, 20 + dy, 44, 21 + dy], fill=DARK)
                 d.rectangle([51, 20 + dy, 52, 21 + dy], fill=DARK)
                 d.rectangle([46, 24 + dy, 49, 24 + dy], fill=SKIN_D)
@@ -391,7 +395,7 @@ def room(width=760, height=470):
     return im
 
 
-def walker(shirt):
+def walker(shirt, gender="m"):
     """[frame_a, frame_b]: karakter berdiri lagi jalan (2 frame selang-seling)
     — dipake buat animasi ngelapor ke meja koordinator."""
     W, H = 30, 44
@@ -435,6 +439,9 @@ def walker(shirt):
         d.rectangle([9, 0 + dy, 22, 7 + dy], fill=HAIR)
         d.rectangle([10, 7 + dy, 21, 17 + dy], fill=SKIN)
         d.rectangle([18, 7 + dy, 21, 17 + dy], fill=SKIN_D)
+        if gender == "f":  # rambut panjang — poni samping nutupin sisi wajah
+            d.rectangle([9, 7 + dy, 12, 17 + dy], fill=HAIR)
+            d.rectangle([19, 7 + dy, 22, 17 + dy], fill=HAIR)
         d.rectangle([13, 10 + dy, 14, 11 + dy], fill=DARK)
         d.rectangle([17, 10 + dy, 18, 11 + dy], fill=DARK)
         d.rectangle([14, 14 + dy, 17, 15 + dy], fill=SKIN_D)
@@ -448,30 +455,35 @@ def main():
     room().save(os.path.join(OUT, "room.png"))
     print("room.png ok")
     colors = {
-        "andrian": (224, 90, 43),
-        "bagas": (74, 144, 217),
-        "rara": (240, 138, 60),
-        "yoga": (61, 220, 151),
-        "nadia": (224, 89, 143),
-        "salsa": (155, 107, 217),
-        "dimas": (245, 212, 66),
+        "andrian": (224, 90, 43),    # koor — oranye
+        "jiya": (224, 89, 143),      # pink
+        "aurora": (155, 107, 217),   # ungu
+        "akmal": (74, 144, 217),     # biru
+        "nova": (240, 138, 60),      # oranye terang
+        "indah": (61, 220, 151),     # hijau
+        "ansuy": (245, 212, 66),     # kuning
+        "silvi": (61, 160, 120),     # teal
+        "candra": (192, 57, 43),     # merah
+        "mala": (200, 80, 120),      # merah muda
+        "saviq": (66, 110, 176),     # biru baja
     }
     props = ["mug", "plant", "none", "mug", "plant", "mug", "none"]
     for i, p in enumerate(team["people"]):
         shirt = colors.get(p["slug"], (74, 144, 217))
         koor = p.get("koor", False)
+        gender = p.get("gender", "m")
         prop = props[i % len(props)] if not koor else "mug"
-        a, b = workstation(shirt, koor=koor, prop=prop)
+        a, b = workstation(shirt, koor=koor, prop=prop, gender=gender)
         a.save(os.path.join(OUT, f"ws-{p['slug']}-a.png"))
         b.save(os.path.join(OUT, f"ws-{p['slug']}-b.png"))
         print(f"ws-{p['slug']}-*.png ok")
         if not koor:
             # varian meja kosong (orangnya lagi ngelapor ke koor)
-            ea, eb = workstation(shirt, prop=prop, empty=True)
+            ea, eb = workstation(shirt, prop=prop, empty=True, gender=gender)
             ea.save(os.path.join(OUT, f"ws-{p['slug']}-desk-a.png"))
             eb.save(os.path.join(OUT, f"ws-{p['slug']}-desk-b.png"))
             # sprite jalan
-            wa, wb = walker(shirt)
+            wa, wb = walker(shirt, gender=gender)
             wa.save(os.path.join(OUT, f"walk-{p['slug']}-a.png"))
             wb.save(os.path.join(OUT, f"walk-{p['slug']}-b.png"))
             print(f"desk+walk-{p['slug']}-*.png ok")
