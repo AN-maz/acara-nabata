@@ -159,6 +159,54 @@
         { "item": "Siapkan alat", "done": false },
         { "item": "Upload ke drive divisi", "done": false }
       ]
+    },
+    {
+      "id": "T-11",
+      "title": "Skrip MC & panduan rundown berjalan",
+      "division": "Acara",
+      "pic": "Teh Jiya",
+      "status": "in_progress",
+      "priority": "high",
+      "deadline": "2026-12-03",
+      "description": "Menyusun skrip pembuka, transisi antar segmen, dan panduan isyarat waktu bareng Timekeeper (kartu 5/1 menit).",
+      "notes": "Rundown final 24 segmen udah ada di data/rundown.json, tinggal dibikin skrip per segmennya.",
+      "checklist": [
+        { "item": "Draft skrip pembuka & sambutan", "done": false },
+        { "item": "Kesepakatan sinyal waktu dengan Timekeeper", "done": false },
+        { "item": "Gladi bersih MC + sound", "done": false }
+      ]
+    },
+    {
+      "id": "T-12",
+      "title": "Fiksasi konsep & perlengkapan mini-games",
+      "division": "Acara",
+      "pic": "Kang Akmal",
+      "status": "todo",
+      "priority": "medium",
+      "deadline": "2026-12-03",
+      "description": "Finalisasi konsep mini-games, aturan main, dan daftar perlengkapan sebelum peserta masuk area expo (12:40–12:55 briefing).",
+      "notes": "Belum dikerjakan sejak diskusi 15 Nov — wajib kelar sebelum H-0.",
+      "checklist": [
+        { "item": "Konsep games final + aturan main", "done": false },
+        { "item": "Daftar perlengkapan & pengadaan", "done": false },
+        { "item": "Briefing ke Participant Guide", "done": false }
+      ]
+    },
+    {
+      "id": "T-13",
+      "title": "Checklist registrasi & 2 titik absen (SKKM)",
+      "division": "Acara",
+      "pic": "Kak Silvi",
+      "status": "in_progress",
+      "priority": "high",
+      "deadline": "2026-12-04",
+      "description": "Menyiapkan alur cek kehadiran di 2 titik (masuk seminar & masuk expo) — satu master sheet dipegang Humas, plus kertas checklist cadangan (NIM + nama).",
+      "notes": "Aturan main udah disepakati; JForm wajib kolom NIM, export final target H-1 sore.",
+      "checklist": [
+        { "item": "Master sheet Humas + kolom NIM", "done": true },
+        { "item": "Kertas checklist cadangan offline", "done": false },
+        { "item": "Tutup & export JForm H-1 sore", "done": false }
+      ]
     }
   ]
 }

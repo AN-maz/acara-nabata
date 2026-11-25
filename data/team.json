@@ -20,99 +20,176 @@
       ]
     },
     {
-      "slug": "bagas",
-      "name": "Bagas",
-      "role": "Ketua Divisi Acara",
+      "slug": "jiya",
+      "name": "Teh Jiya",
+      "role": "MC",
       "division": "Acara",
-      "left": 7.5,
+      "gender": "f",
+      "left": 11.4,
       "bottom": 11,
-      "w": 12.6,
+      "w": 9.2,
       "sw": 96,
       "sh": 72,
       "jobdesk": [
-        "Rundown detail + blocking program hari-H",
-        "Koordinasi pengisi acara dan technical meeting",
-        "Cek kesiapan panggung & kelengkapan acara"
+        "Membawakan acara & menyampaikan informasi ke peserta",
+        "Menjaga suasana dan alur komunikasi",
+        "Menerima isyarat waktu dari Timekeeper"
       ]
     },
     {
-      "slug": "rara",
-      "name": "Rara",
-      "role": "Ketua Divisi Konsumsi",
-      "division": "Konsumsi",
-      "left": 25.5,
+      "slug": "aurora",
+      "name": "Teh Aurora",
+      "role": "MC",
+      "division": "Acara",
+      "gender": "f",
+      "left": 26.0,
       "bottom": 11,
-      "w": 12.6,
+      "w": 9.2,
       "sw": 96,
       "sh": 72,
       "jobdesk": [
-        "Estimasi anggaran konsumsi rapat + hari-H",
-        "Pendataan & negosiasi vendor konsumsi",
-        "Distribusi konsumsi untuk panitia & tamu"
+        "Membawakan acara & menyampaikan informasi ke peserta",
+        "Menjaga suasana dan alur komunikasi",
+        "Menerima isyarat waktu dari Timekeeper"
       ]
     },
     {
-      "slug": "yoga",
-      "name": "Yoga",
-      "role": "Ketua Divisi Keamanan",
-      "division": "Keamanan",
-      "left": 65.5,
+      "slug": "akmal",
+      "name": "Kang Akmal",
+      "role": "PIC Games",
+      "division": "Acara",
+      "gender": "m",
+      "left": 63.8,
       "bottom": 11,
-      "w": 12.6,
+      "w": 9.2,
       "sw": 96,
       "sh": 72,
       "jobdesk": [
-        "Skema pengaturan pintu & alur tamu",
-        "Rekapitulasi izin pemakaian gedung",
-        "Koordinasi keamanan bareng satpam kampus"
+        "Siapkan konsep & perlengkapan mini-games",
+        "Jelaskan aturan permainan ke peserta",
+        "Atur jalannya games sebelum peserta masuk area expo"
       ]
     },
     {
-      "slug": "nadia",
-      "name": "Nadia",
-      "role": "Ketua Divisi Publikasi",
-      "division": "Publikasi",
-      "left": 14,
-      "bottom": 30,
-      "w": 12.6,
+      "slug": "nova",
+      "name": "Kak Nova",
+      "role": "PIC Games",
+      "division": "Acara",
+      "gender": "f",
+      "left": 78.3,
+      "bottom": 11,
+      "w": 9.2,
       "sw": 96,
       "sh": 72,
       "jobdesk": [
-        "Konten IG feed + caption tiap minggu",
-        "Jadwal posting & audit tampilan feed",
-        "Review desain konten sebelum publish"
+        "Siapkan konsep & perlengkapan mini-games",
+        "Jelaskan aturan permainan ke peserta",
+        "Atur jalannya games sebelum peserta masuk area expo"
       ]
     },
     {
-      "slug": "salsa",
-      "name": "Salsa",
-      "role": "Ketua Divisi Dokumentasi",
-      "division": "Dokumentasi",
-      "left": 44,
+      "slug": "indah",
+      "name": "Teh Indah",
+      "role": "Timekeeper (Stage Manager)",
+      "division": "Acara",
+      "gender": "f",
+      "left": 4.98,
       "bottom": 30,
-      "w": 12.6,
+      "w": 7.5,
       "sw": 96,
       "sh": 72,
       "jobdesk": [
-        "Foto & video technical meeting dan hari-H",
-        "Arsip dokumen, surat izin, dan bukti kegiatan",
-        "Edit after-event report buat laporan akhir"
+        "Pantau durasi tiap kegiatan di segmen seminar & expo",
+        "Kasih isyarat kartu 5/1 menit ke MC",
+        "Catat durasi aktual tiap sesi buat evaluasi",
+        "Atur kesiapan panggung & transisi antarsegmen"
       ]
     },
     {
-      "slug": "dimas",
-      "name": "Dimas",
-      "role": "Anggota Publikasi",
-      "division": "Publikasi",
-      "left": 71,
+      "slug": "ansuy",
+      "name": "Teh Ansuy",
+      "role": "PIC Segmen",
+      "division": "Acara",
+      "gender": "f",
+      "left": 19.55,
       "bottom": 30,
-      "w": 12.6,
+      "w": 7.5,
       "sw": 96,
       "sh": 72,
       "jobdesk": [
-        "Desain konten batch 2 (feed & story)",
-        "Reels behind-the-scene technical meeting",
-        "Monitoring insight konten tiap minggu"
+        "Koordinasikan MC, narasumber, & pemutaran slide",
+        "Pastikan stand Hardware/Software/Game siap sebelum expo",
+        "Atur kelancaran tiap segmen",
+        "Ambil daftar hadir seminar sebelum 10:25 & lapor jumlah hadir ke Koor Acara"
+      ]
+    },
+    {
+      "slug": "silvi",
+      "name": "Kak Silvi",
+      "role": "Registration Check",
+      "division": "Acara",
+      "gender": "f",
+      "left": 34.1,
+      "bottom": 30,
+      "w": 7.5,
+      "sw": 96,
+      "sh": 72,
+      "jobdesk": [
+        "Bantu pengecekan kehadiran peserta di 2 titik absen",
+        "Arahkan antrean registrasi",
+        "Koordinasi dengan Humas soal data kehadiran (konversi SKKM)"
+      ]
+    },
+    {
+      "slug": "candra",
+      "name": "Kak Candra",
+      "role": "Registration Check",
+      "division": "Acara",
+      "gender": "m",
+      "left": 57.35,
+      "bottom": 30,
+      "w": 7.5,
+      "sw": 96,
+      "sh": 72,
+      "jobdesk": [
+        "Bantu pengecekan kehadiran peserta di 2 titik absen",
+        "Arahkan antrean registrasi",
+        "Koordinasi dengan Humas soal data kehadiran (konversi SKKM)"
+      ]
+    },
+    {
+      "slug": "mala",
+      "name": "Teh Mala",
+      "role": "Participant Guide",
+      "division": "Acara",
+      "gender": "f",
+      "left": 71.9,
+      "bottom": 30,
+      "w": 7.5,
+      "sw": 96,
+      "sh": 72,
+      "jobdesk": [
+        "Arahkan peserta menuju lokasi kegiatan",
+        "Bantu perpindahan antar sesi (seminar → games → expo)",
+        "Jadi mic runner pada sesi tanya jawab"
+      ]
+    },
+    {
+      "slug": "saviq",
+      "name": "Saviq",
+      "role": "Sound Operator",
+      "division": "Acara",
+      "gender": "m",
+      "left": 86.45,
+      "bottom": 30,
+      "w": 7.5,
+      "sw": 96,
+      "sh": 72,
+      "jobdesk": [
+        "Atur mixer & mic (MC, pemateri, tanya jawab) per sesi",
+        "Putar lagu nasional & MARS UTB dari file offline",
+        "Atur sound booth expo biar gak nabrakan audio utama",
+        "Standby dekat mixer sepanjang sesi seminar & expo"
       ]
     }
   ]

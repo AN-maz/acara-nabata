@@ -1,65 +1,10 @@
 {
-  "period": "November 2026",
+  "period": "Nov 2026 – Feb 2027",
   "legend": {
     "hadir": "Hadir",
     "izin": "Izin",
     "sakit": "Sakit",
     "alfa": "Alfa"
   },
-  "members": [
-    {
-      "name": "Bagas",
-      "division": "Acara",
-      "records": {
-        "2026-11-18": "hadir",
-        "2026-11-20": "hadir",
-        "2026-11-22": "hadir"
-      }
-    },
-    {
-      "name": "Nadia",
-      "division": "Publikasi",
-      "records": {
-        "2026-11-18": "hadir",
-        "2026-11-20": "hadir",
-        "2026-11-22": "izin"
-      }
-    },
-    {
-      "name": "Rara",
-      "division": "Konsumsi",
-      "records": {
-        "2026-11-18": "sakit",
-        "2026-11-20": "hadir",
-        "2026-11-22": "hadir"
-      }
-    },
-    {
-      "name": "Yoga",
-      "division": "Keamanan",
-      "records": {
-        "2026-11-18": "hadir",
-        "2026-11-20": "alfa",
-        "2026-11-22": "hadir"
-      }
-    },
-    {
-      "name": "Salsa",
-      "division": "Dokumentasi",
-      "records": {
-        "2026-11-18": "hadir",
-        "2026-11-20": "hadir",
-        "2026-11-22": "hadir"
-      }
-    },
-    {
-      "name": "Dimas",
-      "division": "Publikasi",
-      "records": {
-        "2026-11-18": "hadir",
-        "2026-11-20": "hadir",
-        "2026-11-22": "sakit"
-      }
-    }
-  ]
+  "members": []
 }
